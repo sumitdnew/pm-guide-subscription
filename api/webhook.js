@@ -1,7 +1,5 @@
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
-import fs from 'fs';
-import path from 'path';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -98,50 +96,19 @@ async function createUserCredentials(email) {
     accessLevel: 'full',
     createdAt: new Date().toISOString(),
     isDemo: false,
-    stripeCustomerId: null, // Could be added if needed
     subscriptionStatus: 'active'
   };
   
-  await saveUserToDatabase(user);
+  // For Vercel, we'll just log the user creation
+  // In production, you'd want to use a proper database
+  console.log('User created:', {
+    email: user.email,
+    username: user.username,
+    accessLevel: user.accessLevel,
+    subscriptionStatus: user.subscriptionStatus
+  });
   
   return { username, password };
-}
-
-async function saveUserToDatabase(user) {
-  try {
-    // Create users directory if it doesn't exist
-    const usersDir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(usersDir)) {
-      fs.mkdirSync(usersDir, { recursive: true });
-    }
-    
-    const usersFile = path.join(usersDir, 'users.json');
-    
-    // Read existing users
-    let users = [];
-    if (fs.existsSync(usersFile)) {
-      const fileContent = fs.readFileSync(usersFile, 'utf8');
-      users = JSON.parse(fileContent);
-    }
-    
-    // Check if user already exists
-    const existingUserIndex = users.findIndex(u => u.email === user.email);
-    if (existingUserIndex !== -1) {
-      // Update existing user
-      users[existingUserIndex] = { ...users[existingUserIndex], ...user };
-    } else {
-      // Add new user
-      users.push(user);
-    }
-    
-    // Write back to file
-    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-    
-    console.log('User saved to database:', user.email);
-  } catch (error) {
-    console.error('Error saving user to database:', error);
-    throw error;
-  }
 }
 
 function generateSecurePassword() {
@@ -156,6 +123,9 @@ function generateSecurePassword() {
 async function sendCredentialsEmail(email, credentials) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.warn('Email credentials not configured, skipping email send');
+    console.log('Would send credentials to:', email);
+    console.log('Username:', credentials.username);
+    console.log('Password:', credentials.password);
     return;
   }
 

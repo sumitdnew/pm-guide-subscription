@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 // Authorized users for the PM Guide system
 // Add or remove email addresses as needed
 export const authorizedUsers = [
@@ -18,20 +15,6 @@ export const userRoles = {
   // Add more user roles as needed
 };
 
-// Load users from database file
-export const loadUsersFromDatabase = () => {
-  try {
-    const usersFile = path.join(process.cwd(), 'data', 'users.json');
-    if (fs.existsSync(usersFile)) {
-      const fileContent = fs.readFileSync(usersFile, 'utf8');
-      return JSON.parse(fileContent);
-    }
-  } catch (error) {
-    console.error('Error loading users from database:', error);
-  }
-  return [];
-};
-
 // Check if a user is authorized (includes database users)
 export const isUserAuthorized = (email) => {
   if (!email) return false;
@@ -43,28 +26,39 @@ export const isUserAuthorized = (email) => {
     return true;
   }
   
-  // Check database users
-  try {
-    const users = loadUsersFromDatabase();
-    const user = users.find(u => u.email.toLowerCase() === normalizedEmail);
-    return user && user.subscriptionStatus === 'active';
-  } catch (error) {
-    console.error('Error checking user authorization:', error);
-    return false;
+  // For now, we'll use a simple approach
+  // In production, you'd want to check against a proper database
+  // For testing, we can add specific emails here
+  const testUsers = [
+    'sumitdas.cse@gmail.com', // Add test users here
+  ];
+  
+  if (testUsers.includes(normalizedEmail)) {
+    return true;
   }
+  
+  return false;
 };
 
-// Get user from database
+// Get user from database (simplified for Vercel)
 export const getUserFromDatabase = (email) => {
   if (!email) return null;
   
-  try {
-    const users = loadUsersFromDatabase();
-    return users.find(u => u.email.toLowerCase() === email.toLowerCase());
-  } catch (error) {
-    console.error('Error getting user from database:', error);
-    return null;
+  const normalizedEmail = email.toLowerCase();
+  
+  // For now, return a basic user object
+  // In production, you'd query a real database
+  if (isUserAuthorized(normalizedEmail)) {
+    return {
+      email: normalizedEmail,
+      username: normalizedEmail.split('@')[0] + '_user',
+      accessLevel: 'full',
+      subscriptionStatus: 'active',
+      isDemo: false
+    };
   }
+  
+  return null;
 };
 
 // Get user role
@@ -78,10 +72,9 @@ export const getUserRole = (email) => {
     return userRoles[normalizedEmail];
   }
   
-  // Check database user
-  const user = getUserFromDatabase(normalizedEmail);
-  if (user) {
-    return user.accessLevel || 'user';
+  // Check if user is authorized
+  if (isUserAuthorized(normalizedEmail)) {
+    return 'full';
   }
   
   return 'user';
