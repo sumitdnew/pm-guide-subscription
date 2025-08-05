@@ -4,11 +4,18 @@ import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
+// Initialize Supabase client with error handling
+let supabase;
+try {
+  supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY
+  );
+  console.log('Supabase client initialized successfully');
+} catch (error) {
+  console.error('Error initializing Supabase client:', error);
+  supabase = null;
+}
 
 export const config = {
   api: {
@@ -124,10 +131,15 @@ async function createUserCredentials(email) {
     };
     
     // PRODUCTION: Save to Supabase database
-    if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY && supabase) {
+      console.log('Supabase configured, attempting to save user');
       await saveUserToSupabase(user);
     } else {
       console.warn('Supabase not configured, logging user creation only');
+      console.log('Missing environment variables:');
+      console.log('- SUPABASE_URL:', !!process.env.SUPABASE_URL);
+      console.log('- SUPABASE_ANON_KEY:', !!process.env.SUPABASE_ANON_KEY);
+      console.log('- Supabase client:', !!supabase);
       console.log('User created (not saved to database):', {
         email: user.email,
         username: user.username,
@@ -147,6 +159,8 @@ async function createUserCredentials(email) {
 async function saveUserToSupabase(user) {
   try {
     console.log('Saving user to Supabase:', user.email);
+    console.log('Supabase URL:', process.env.SUPABASE_URL);
+    console.log('Supabase key configured:', !!process.env.SUPABASE_ANON_KEY);
     
     const { data, error } = await supabase
       .from('users')
