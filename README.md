@@ -1,92 +1,60 @@
-# 🚀 AI PM Framework Guide
+# PM Guide - Product Management Framework Library
 
-A comprehensive, interactive web application designed to help Product Managers learn and apply essential product management frameworks through hands-on simulators and real-world case studies.
+A comprehensive web application providing product managers with access to 20+ frameworks, simulators, and case studies for mastering product management methodologies.
 
-![React](https://img.shields.io/badge/React-18.0.0-blue)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0+-38B2AC)
-![License](https://img.shields.io/badge/License-MIT-green)
+## 🚀 Features
 
-## 📋 Table of Contents
+### Core Features
+- **20+ Framework Simulators**: RICE, ICE, JTBD, Forces Analysis, Kano Analysis, and more
+- **Complete Case Studies**: Real-world examples from Netflix, Spotify, Airbnb, Uber, and Slack
+- **Interactive Tools**: Calculators, generators, and analysis frameworks
+- **Secure Payment System**: Stripe integration for seamless purchases
+- **User Management**: Automatic credential generation and email delivery
 
-- [Features](#-features)
-- [Frameworks Included](#-frameworks-included)
-- [Getting Started](#-getting-started)
-- [Usage](#-usage)
-- [Case Studies](#-case-studies)
-- [Technology Stack](#-technology-stack)
-- [Project Structure](#-project-structure)
-- [Contributing](#-contributing)
-- [License](#-license)
+### Available Frameworks
+- **Prioritization**: RICE Calculator, ICE Scoring, MoSCoW Method
+- **Discovery**: JTBD Generator, User Persona Generator, Customer Development, Design Thinking
+- **Strategy**: Forces Analysis, Kano Analysis, SWOT Analysis, North Star Framework, Competitive Analysis, Pricing Strategy, Market Size Calculator, Value Proposition Canvas
+- **Validation**: PMF Measurement, A/B Test Calculator
+- **Analytics**: Cohort Analysis, Customer Lifetime Value, AARRR Metrics
+- **Planning**: OKR Generator
+- **Launch**: Go-to-Market Strategy
+- **Growth**: Growth Hacking
 
-## ✨ Features
+## 🛠️ Tech Stack
 
-### 🎯 Interactive Simulators
-- **20+ PM Framework Simulators** with real-time calculations
-- **Phase-based Filtering** to find frameworks by product stage
-- **Professional UI** with responsive design
-- **Real-time Results** with actionable insights
+### Frontend
+- **React.js** - Modern UI framework
+- **Tailwind CSS** - Utility-first CSS framework
+- **Lucide React** - Beautiful icons
+- **React Router** - Client-side routing
 
-### 📚 Real-World Case Studies
-- **15+ Company Case Studies** from Intercom, Spotify, Airbnb, Facebook, and more
-- **Detailed Analysis** of challenges, approaches, and results
-- **Actionable Lessons** you can apply to your own work
-- **External Links** to full case studies
+### Backend
+- **Node.js** - Server runtime
+- **Express.js** - Web framework
+- **Vercel** - Serverless deployment platform
 
-### 🎨 User Experience
-- **Intuitive Navigation** between frameworks and simulators
-- **Responsive Design** that works on all devices
-- **Modern UI** with Tailwind CSS
-- **Fast Performance** with optimized React components
+### Database & Authentication
+- **Supabase** - PostgreSQL database with real-time features
+- **Stripe** - Payment processing and webhooks
 
-## 🎯 Frameworks Included
+### Email Service
+- **Nodemailer** - Email delivery system
+- **Gmail SMTP** - Email provider
 
-### **Prioritization & Planning**
-- **RICE Prioritization** - Score features by Reach, Impact, Confidence, Effort
-- **ICE Scoring** - Quick evaluation with Impact, Confidence, Ease
-- **MoSCoW Method** - Must Have, Should Have, Could Have, Won't Have
-- **OKRs** - Objectives and Key Results framework
-
-### **Product-Market Fit & Growth**
-- **Product-Market Fit (PMF)** - Sean Ellis survey methodology
-- **AARRR Metrics** - Acquisition, Activation, Retention, Revenue, Referral
-- **North Star Metrics** - Single metric that drives product decisions
-- **Growth Hacking** - Systematic approach to rapid growth
-
-### **Customer Understanding**
-- **Jobs-to-be-Done (JTBD)** - Understand customer motivations
-- **4 Forces of Progress** - Clayton Christensen's framework
-- **Kano Model** - Customer satisfaction vs feature presence
-- **User Persona Generator** - Create detailed user profiles
-
-### **Analysis & Strategy**
-- **SWOT Analysis** - Strengths, Weaknesses, Opportunities, Threats
-- **Competitive Analysis Matrix** - Evaluate competitive landscape
-- **Value Proposition Canvas** - Map customer jobs, pains, and gains
-- **Design Thinking** - Human-centered innovation approach
-
-### **Business Metrics**
-- **Customer Lifetime Value (CLV)** - Calculate long-term customer value
-- **Cohort Analysis** - Track user behavior over time
-- **A/B Test Sample Size** - Determine statistical significance
-- **Market Size Calculator** - TAM, SAM, SOM analysis
-- **Pricing Strategy** - Optimize pricing for maximum revenue
-
-### **Development & Go-to-Market**
-- **Customer Development** - Validate assumptions with customers
-- **Go-to-Market Strategy** - Comprehensive launch planning
-
-## 🚀 Getting Started
+## 📦 Installation
 
 ### Prerequisites
-- Node.js (version 18.0.0 or higher)
+- Node.js (v16 or higher)
 - npm or yarn
+- Git
 
-### Installation
+### Local Development Setup
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/sumitdnew/pm-guide.git
-   cd pm-guide
+   git clone https://github.com/sumitdnew/pm-guide-subscription.git
+   cd pm-guide-subscription
    ```
 
 2. **Install dependencies**
@@ -94,154 +62,174 @@ A comprehensive, interactive web application designed to help Product Managers l
    npm install
    ```
 
-3. **Start the development server**
+3. **Set up environment variables**
+   Create a `.env` file in the root directory:
+   ```env
+   # Stripe Configuration
+   STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+   STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+
+   # Email Configuration (Gmail)
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASS=your_gmail_app_password
+
+   # Supabase Database Configuration
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+   # Frontend Supabase Configuration
+   REACT_APP_SUPABASE_URL=https://your-project.supabase.co
+   REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+   # App Configuration
+   APP_URL=https://yourdomain.com
+
+   # Server Configuration
+   PORT=3001
+   ```
+
+4. **Start the development server**
    ```bash
    npm start
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:3000`
+5. **Start the backend server**
+   ```bash
+   node server.js
+   ```
 
-### Build for Production
-```bash
-npm run build
-```
+## 🌐 Deployment
 
-## 📖 Usage
+### Vercel Deployment
 
-### **Main Interface**
-1. **Start with the PM Assistant** - Answer questions about your product stage and goals
-2. **Get Personalized Recommendations** - Receive framework suggestions based on your needs
-3. **Try Simulators** - Click "Try Simulator" to open interactive tools
-4. **Explore All Frameworks** - Use the "Open Framework Simulators" button
+1. **Connect your GitHub repository to Vercel**
+2. **Set environment variables in Vercel dashboard**
+3. **Deploy automatically on push to main branch**
 
-### **Framework Simulators**
-- **Input Data** - Fill in the required fields for each framework
-- **Get Results** - View calculated scores, insights, and recommendations
-- **Learn More** - Click external links for detailed framework explanations
-- **View Case Studies** - See real-world examples from successful companies
+### Environment Variables for Production
 
-### **Case Studies**
-- **Browse by Framework** - Each simulator has relevant case studies
-- **Learn from Real Examples** - Understand how companies like Intercom, Spotify, and Airbnb used these frameworks
-- **Apply Lessons** - Use the insights in your own product work
+Set these in your Vercel dashboard:
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `EMAIL_USER`
+- `EMAIL_PASS`
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `REACT_APP_SUPABASE_URL`
+- `REACT_APP_SUPABASE_ANON_KEY`
+- `APP_URL`
 
-## 📚 Case Studies
+## 🔧 Configuration
 
-### **Featured Companies**
-- **Intercom** - RICE Prioritization for feature roadmap
-- **Spotify** - ICE Scoring for rapid feature evaluation
-- **Airbnb** - Jobs-to-be-Done for customer understanding
-- **Facebook** - North Star Metrics (Daily Active Users)
-- **Superhuman** - Product-Market Fit survey methodology
-- **Dropbox** - AARRR Metrics for growth optimization
-- **Apple** - Kano Model for feature categorization
-- **Google** - OKRs for team alignment
-- **LinkedIn** - Growth Hacking for viral expansion
-- **Zappos** - Customer Development for validation
-- **IDEO** - Design Thinking for innovation
-- **Tesla** - Value Proposition Canvas for positioning
-- **Slack** - Go-to-Market Strategy for market entry
-- **Netflix** - SWOT Analysis for strategic planning
-- **Microsoft** - MoSCoW Method for Azure development
+### Stripe Setup
 
-## 🛠 Technology Stack
+1. **Create a Stripe account** and get your API keys
+2. **Create a webhook endpoint** pointing to your domain: `https://yourdomain.com/api/webhook`
+3. **Configure webhook events** to listen for `checkout.session.completed`
+4. **Copy the webhook signing secret** to your environment variables
 
-- **Frontend**: React 18.0.0
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Build Tool**: Create React App
-- **Deployment**: Render (Static Site)
+### Supabase Setup
+
+1. **Create a Supabase project**
+2. **Create a `users` table** with the following schema:
+   ```sql
+   CREATE TABLE users (
+     id SERIAL PRIMARY KEY,
+     email VARCHAR UNIQUE NOT NULL,
+     username VARCHAR UNIQUE NOT NULL,
+     password VARCHAR NOT NULL,
+     access_level VARCHAR DEFAULT 'full',
+     created_at TIMESTAMP DEFAULT NOW(),
+     is_demo BOOLEAN DEFAULT FALSE,
+     subscription_status VARCHAR DEFAULT 'active',
+     stripe_customer_id VARCHAR
+   );
+   ```
+3. **Copy your Supabase URL and anon key** to environment variables
+
+### Email Setup
+
+1. **Enable 2-factor authentication** on your Gmail account
+2. **Generate an app password** for this application
+3. **Add the email and password** to environment variables
+
+## 🎯 Usage
+
+### Demo Mode
+- Access limited simulators (RICE Calculator, ICE Scoring)
+- View all available frameworks
+- Test the upgrade flow
+
+### Full Version
+- Access all 20+ simulators
+- Complete case studies
+- Comprehensive framework library
+- Lifetime access after purchase
+
+### Payment Flow
+1. User clicks "Upgrade to Full Version"
+2. Redirected to Stripe checkout
+3. Payment processed securely
+4. Webhook triggers user creation
+5. Email sent with login credentials
+6. User gains full access
+
+## 🔒 Security
+
+- **Webhook signature verification** ensures requests come from Stripe
+- **Environment variables** keep secrets secure
+- **HTTPS only** for all production traffic
+- **Private repository** protects source code
 
 ## 📁 Project Structure
 
 ```
-pm-guide/
-├── public/
-│   ├── index.html
-│   └── manifest.json
+pm-guide-subscription/
 ├── src/
-│   ├── components/
-│   │   └── CaseStudyViewer.js
-│   ├── simulators/
-│   │   ├── RiceCalculator.js
-│   │   ├── IceCalculator.js
-│   │   ├── JtbdGenerator.js
-│   │   ├── ForcesAnalyzer.js
-│   │   ├── KanoAnalyzer.js
-│   │   ├── PmfMeasurement.js
-│   │   ├── SwotAnalysis.js
-│   │   ├── AarrrMetrics.js
-│   │   ├── OkrGenerator.js
-│   │   ├── NorthStarFramework.js
-│   │   ├── MoscowMethod.js
-│   │   ├── UserPersonaGenerator.js
-│   │   ├── CohortAnalysisCalculator.js
-│   │   ├── AbTestSampleSizeCalculator.js
-│   │   ├── CustomerLifetimeValueCalculator.js
-│   │   ├── CompetitiveAnalysisMatrix.js
-│   │   ├── PricingStrategyCalculator.js
-│   │   ├── MarketSizeCalculator.js
-│   │   ├── CustomerDevelopment.js
-│   │   ├── DesignThinking.js
-│   │   ├── ValuePropositionCanvas.js
-│   │   ├── GoToMarketStrategy.js
-│   │   └── GrowthHacking.js
-│   ├── App.js
-│   ├── PMAssistant.js
-│   ├── FrameworkSimulator.js
-│   ├── RecommendationsView.js
-│   ├── data.js
-│   ├── index.js
-│   └── index.css
-├── package.json
-├── render.yaml
-└── README.md
+│   ├── components/          # React components
+│   ├── pages/              # Page components
+│   ├── utils/              # Utility functions
+│   └── App.js              # Main app component
+├── api/                    # Vercel API routes
+│   └── webhook.js          # Stripe webhook handler
+├── server.js               # Express server (local development)
+├── package.json            # Dependencies and scripts
+└── README.md              # This file
 ```
+
+## 🚀 Scripts
+
+- `npm start` - Start React development server
+- `npm run build` - Build for production
+- `npm test` - Run tests
+- `node server.js` - Start backend server
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how you can help:
-
-### **Adding New Frameworks**
-1. Create a new simulator component in `src/simulators/`
-2. Add framework configuration to `src/data.js`
-3. Update `FrameworkSimulator.js` to include the new simulator
-4. Add case studies if available
-
-### **Improving Case Studies**
-1. Research real company examples
-2. Add detailed case studies to `src/data.js`
-3. Include challenges, approaches, results, and lessons
-
-### **UI/UX Improvements**
-1. Enhance the visual design
-2. Improve user experience
-3. Add new features like save/load functionality
-
-### **Bug Reports & Feature Requests**
-1. Open an issue on GitHub
-2. Describe the problem or feature request
-3. Provide steps to reproduce (for bugs)
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is private and proprietary. All rights reserved.
 
-## 🙏 Acknowledgments
+## 🆘 Support
 
-- **Product Management Community** - For inspiration and feedback
-- **Case Study Companies** - For sharing their success stories
-- **Open Source Contributors** - For the amazing tools and libraries
-- **React & Tailwind CSS Teams** - For the excellent frameworks
+For support or questions:
+- Check the documentation
+- Review the code comments
+- Contact the development team
 
-## 📞 Contact
+## 🎉 Acknowledgments
 
-- **GitHub**: [@sumitdnew](https://github.com/sumitdnew)
-- **Repository**: [https://github.com/sumitdnew/pm-guide](https://github.com/sumitdnew/pm-guide)
+- Built with React and modern web technologies
+- Powered by Stripe for secure payments
+- Hosted on Vercel for reliable deployment
+- Database powered by Supabase
 
 ---
 
-**Made with ❤️ for Product Managers everywhere**
-
-*Empowering PMs to make better product decisions through interactive learning and real-world examples.*
+**PM Guide** - Empowering product managers with comprehensive frameworks and tools for success.
