@@ -3,6 +3,13 @@ import nodemailer from 'nodemailer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+// Configure Vercel to not parse the body
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -12,7 +19,16 @@ export default async function handler(req, res) {
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    // Get raw body
+    const chunks = [];
+    req.on('data', chunk => chunks.push(chunk));
+    await new Promise((resolve, reject) => {
+      req.on('end', resolve);
+      req.on('error', reject);
+    });
+    const rawBody = Buffer.concat(chunks).toString('utf8');
+    
+    event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
