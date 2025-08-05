@@ -45,8 +45,8 @@ const UpgradePage = ({ onClose, isDemo = true }) => {
   ];
 
   const handlePurchase = () => {
-    // Test mode Stripe checkout link
-    window.open('https://buy.stripe.com/test_eVq5kF2zI7nbfVDcsfdjO00', '_blank');
+    // Live Stripe checkout link
+    window.open('https://buy.stripe.com/eVq14pgqygXLeRz0JxdjO03', '_blank');
   };
 
   return (
