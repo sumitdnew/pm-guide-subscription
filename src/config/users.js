@@ -1,10 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client for frontend
-const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL,
-  process.env.REACT_APP_SUPABASE_ANON_KEY
-);
+// Initialize Supabase client for frontend (only if environment variables are available)
+let supabase = null;
+if (process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
+  supabase = createClient(
+    process.env.REACT_APP_SUPABASE_URL,
+    process.env.REACT_APP_SUPABASE_ANON_KEY
+  );
+}
 
 // Authorized users for the PM Guide system
 // Add or remove email addresses as needed
@@ -35,7 +38,7 @@ export const isUserAuthorized = async (email) => {
   }
   
   // PRODUCTION: Check Supabase database for user
-  if (process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
+  if (supabase) {
     try {
       const user = await getUserFromSupabase(normalizedEmail);
       return user && user.subscription_status === 'active';
@@ -66,7 +69,7 @@ export const getUserFromDatabase = async (emailOrUsername) => {
   const normalizedInput = emailOrUsername.toLowerCase();
   
   // PRODUCTION: Get user from Supabase
-  if (process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
+  if (supabase) {
     try {
       return await getUserFromSupabase(normalizedInput);
     } catch (error) {
@@ -111,6 +114,11 @@ export const getUserRole = async (email) => {
 
 // PRODUCTION: Get user from Supabase
 async function getUserFromSupabase(emailOrUsername) {
+  if (!supabase) {
+    console.log('Supabase not initialized - skipping database lookup');
+    return null;
+  }
+  
   try {
     // First try to find by email
     let { data, error } = await supabase

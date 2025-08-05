@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronRight, Calculator, Sparkles, Target, TrendingUp, Users } from 'lucide-react';
 import FrameworkSimulator from './FrameworkSimulator';
 import RecommendationsView from './RecommendationsView';
+import CaseStudyViewer from './components/CaseStudyViewer';
 import { frameworkDatabase, questions } from './data';
 
 const PMAssistant = ({ isDemo = false }) => {
@@ -10,6 +11,8 @@ const PMAssistant = ({ isDemo = false }) => {
   const [recommendations, setRecommendations] = useState(null);
   const [showSimulator, setShowSimulator] = useState(false);
   const [selectedSimulator, setSelectedSimulator] = useState('');
+  const [showCaseStudies, setShowCaseStudies] = useState(false);
+  const [currentCaseStudyFramework, setCurrentCaseStudyFramework] = useState('');
 
   const generateRecommendations = () => {
     const { stage, type, challenge, timeline } = responses;
@@ -127,7 +130,28 @@ const PMAssistant = ({ isDemo = false }) => {
     setRecommendations(null);
     setShowSimulator(false);
     setSelectedSimulator('');
+    setShowCaseStudies(false);
+    setCurrentCaseStudyFramework('');
   };
+
+  const handleViewCaseStudies = (frameworkId) => {
+    setCurrentCaseStudyFramework(frameworkId);
+    setShowCaseStudies(true);
+  };
+
+  const handleBackFromCaseStudies = () => {
+    setShowCaseStudies(false);
+    setCurrentCaseStudyFramework('');
+  };
+
+  if (showCaseStudies) {
+    return (
+      <CaseStudyViewer 
+        frameworkId={currentCaseStudyFramework}
+        onBack={handleBackFromCaseStudies}
+      />
+    );
+  }
 
   if (showSimulator) {
     return (
@@ -151,6 +175,7 @@ const PMAssistant = ({ isDemo = false }) => {
           setSelectedSimulator(framework);
           setShowSimulator(true);
         }}
+        onViewCaseStudies={handleViewCaseStudies}
       />
     );
   }

@@ -41,7 +41,7 @@ const frameworkToSimulatorMap = {
   'Network Effects': 'networkeffects'
 };
 
-const RecommendationsView = ({ recommendations, onReset, onOpenSimulator }) => {
+const RecommendationsView = ({ recommendations, onReset, onOpenSimulator, onViewCaseStudies }) => {
   // Get icon for resource type
   const getResourceIcon = (type) => {
     switch (type) {
@@ -115,7 +115,16 @@ const RecommendationsView = ({ recommendations, onReset, onOpenSimulator }) => {
                   </button>
                 )}
                 <button
-                  onClick={() => onOpenSimulator(`${simulatorId || framework.name.toLowerCase().replace(/\s+/g, '-')}-case-study`)}
+                  onClick={() => {
+                    console.log('Case Study clicked for framework:', framework.name);
+                    console.log('Simulator ID:', simulatorId);
+                    console.log('Fallback ID:', framework.name.toLowerCase().replace(/\s+/g, '-'));
+                    if (onViewCaseStudies) {
+                      onViewCaseStudies(simulatorId || framework.name.toLowerCase().replace(/\s+/g, '-'));
+                    } else {
+                      onOpenSimulator(simulatorId || framework.name.toLowerCase().replace(/\s+/g, '-'));
+                    }
+                  }}
                   className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg text-sm font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Building2 className="h-4 w-4 mr-2" />

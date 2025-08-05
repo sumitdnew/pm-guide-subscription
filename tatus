@@ -1,0 +1,10 @@
+[33m348a86f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mclean-main[m[33m, [m[1;31morigin/clean-main[m[33m)[m Update payment link to live Stripe checkout
+[33m9f193bb[m Add detailed webhook debugging logs
+[33ma0b2823[m Update login to accept both email and username
+[33mc6a2e4d[m Fix authentication to work with database user credentials
+[33m6f59d5e[m Add detailed debugging for 500 error in webhook
+[33m95564ea[m Add Supabase database integration for production user management
+[33mbb54f86[m Add test email HTML page for easy testing
+[33m525161e[m Add detailed email debugging and test function
+[33mf04f511[m Remove test user email to allow re-testing
+[33me97d556[m Fix nodemailer createTransport function name

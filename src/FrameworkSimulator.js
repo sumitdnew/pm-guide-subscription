@@ -129,7 +129,7 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
   if (showCaseStudies) {
     return (
       <CaseStudyViewer 
-        framework={currentCaseStudyFramework}
+        frameworkId={currentCaseStudyFramework}
         onBack={handleBackFromCaseStudies}
       />
     );

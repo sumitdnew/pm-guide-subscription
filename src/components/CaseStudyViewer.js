@@ -5,6 +5,10 @@ import { caseStudies } from '../data';
 const CaseStudyViewer = ({ frameworkId, onBack }) => {
   const [currentCaseIndex, setCurrentCaseIndex] = useState(0);
   
+  console.log('CaseStudyViewer received frameworkId:', frameworkId);
+  console.log('Available case study keys:', Object.keys(caseStudies));
+  console.log('Studies for this framework:', caseStudies[frameworkId]);
+  
   const studies = caseStudies[frameworkId] || [];
   
   if (studies.length === 0) {
