@@ -115,8 +115,17 @@ async function createUserCredentials(email) {
       subscriptionStatus: 'active'
     };
     
-    // For Vercel, we'll just log the user creation
-    // In production, you'd want to use a proper database
+    // PRODUCTION: Save to database
+    // Option 1: Supabase (Recommended)
+    // await saveUserToSupabase(user);
+    
+    // Option 2: MongoDB
+    // await saveUserToMongoDB(user);
+    
+    // Option 3: PostgreSQL
+    // await saveUserToPostgreSQL(user);
+    
+    // For now, we'll just log the user creation
     console.log('User created:', {
       email: user.email,
       username: user.username,
@@ -130,6 +139,67 @@ async function createUserCredentials(email) {
     throw error;
   }
 }
+
+// PRODUCTION DATABASE FUNCTIONS (Uncomment and configure as needed)
+
+// Supabase Integration
+// async function saveUserToSupabase(user) {
+//   const { createClient } = require('@supabase/supabase-js');
+//   const supabase = createClient(
+//     process.env.SUPABASE_URL,
+//     process.env.SUPABASE_ANON_KEY
+//   );
+//   
+//   const { data, error } = await supabase
+//     .from('users')
+//     .upsert([user], { onConflict: 'email' });
+//   
+//   if (error) throw error;
+//   console.log('User saved to Supabase:', user.email);
+// }
+
+// MongoDB Integration
+// async function saveUserToMongoDB(user) {
+//   const { MongoClient } = require('mongodb');
+//   const client = new MongoClient(process.env.MONGODB_URI);
+//   
+//   await client.connect();
+//   const db = client.db('pm-guide');
+//   const collection = db.collection('users');
+//   
+//   await collection.updateOne(
+//     { email: user.email },
+//     { $set: user },
+//     { upsert: true }
+//   );
+//   
+//   await client.close();
+//   console.log('User saved to MongoDB:', user.email);
+// }
+
+// PostgreSQL Integration
+// async function saveUserToPostgreSQL(user) {
+//   const { Pool } = require('pg');
+//   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+//   
+//   const query = `
+//     INSERT INTO users (email, username, password, access_level, created_at, subscription_status)
+//     VALUES ($1, $2, $3, $4, $5, $6)
+//     ON CONFLICT (email) DO UPDATE SET
+//       username = EXCLUDED.username,
+//       password = EXCLUDED.password,
+//       access_level = EXCLUDED.access_level,
+//       subscription_status = EXCLUDED.subscription_status
+//   `;
+//   
+//   await pool.query(query, [
+//     user.email, user.username, user.password, user.accessLevel,
+//     user.createdAt, user.subscriptionStatus
+//   ]);
+//   
+//   await pool.end();
+//   console.log('User saved to PostgreSQL:', user.email);
+// }
 
 function generateSecurePassword() {
   try {
@@ -147,24 +217,38 @@ function generateSecurePassword() {
 
 async function sendCredentialsEmail(email, credentials) {
   console.log('Starting sendCredentialsEmail for:', email);
+  console.log('EMAIL_USER configured:', !!process.env.EMAIL_USER);
+  console.log('EMAIL_PASS configured:', !!process.env.EMAIL_PASS);
   
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.warn('Email credentials not configured, skipping email send');
-    console.log('Would send credentials to:', email);
+    console.log('=== CREDENTIALS GENERATED ===');
+    console.log('Email:', email);
     console.log('Username:', credentials.username);
     console.log('Password:', credentials.password);
+    console.log('Access Level:', 'full');
+    console.log('Subscription Status:', 'active');
+    console.log('=== END CREDENTIALS ===');
+    console.log('To configure email, add EMAIL_USER and EMAIL_PASS environment variables in Vercel');
     return;
   }
 
   try {
+    console.log('Creating email transporter...');
+    
     // Fix the nodemailer import issue
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-      }
+      },
+      // Add additional options for better debugging
+      debug: true,
+      logger: true
     });
+
+    console.log('Email transporter created successfully');
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -193,10 +277,19 @@ async function sendCredentialsEmail(email, credentials) {
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    console.log('Sending email to:', email);
+    console.log('From:', process.env.EMAIL_USER);
+    
+    const result = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully:', result);
     console.log('Credentials email sent successfully to:', email);
   } catch (error) {
     console.error('Error sending credentials email:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      command: error.command
+    });
     throw error;
   }
 } 
