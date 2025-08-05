@@ -17,6 +17,8 @@ function App() {
       if (authenticated) {
         const user = auth.getCurrentUser();
         setCurrentUser(user);
+        // Set demo state based on stored user data
+        setIsDemo(user?.isDemo || false);
       }
     };
 
