@@ -1,7 +1,14 @@
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
+import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 export const config = {
   api: {
@@ -109,29 +116,25 @@ async function createUserCredentials(email) {
       email: email.toLowerCase(),
       username,
       password,
-      accessLevel: 'full',
-      createdAt: new Date().toISOString(),
-      isDemo: false,
-      subscriptionStatus: 'active'
+      access_level: 'full',
+      created_at: new Date().toISOString(),
+      is_demo: false,
+      subscription_status: 'active',
+      stripe_customer_id: null // Could be added if needed
     };
     
-    // PRODUCTION: Save to database
-    // Option 1: Supabase (Recommended)
-    // await saveUserToSupabase(user);
-    
-    // Option 2: MongoDB
-    // await saveUserToMongoDB(user);
-    
-    // Option 3: PostgreSQL
-    // await saveUserToPostgreSQL(user);
-    
-    // For now, we'll just log the user creation
-    console.log('User created:', {
-      email: user.email,
-      username: user.username,
-      accessLevel: user.accessLevel,
-      subscriptionStatus: user.subscriptionStatus
-    });
+    // PRODUCTION: Save to Supabase database
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+      await saveUserToSupabase(user);
+    } else {
+      console.warn('Supabase not configured, logging user creation only');
+      console.log('User created (not saved to database):', {
+        email: user.email,
+        username: user.username,
+        accessLevel: user.access_level,
+        subscriptionStatus: user.subscription_status
+      });
+    }
     
     return { username, password };
   } catch (error) {
@@ -140,66 +143,27 @@ async function createUserCredentials(email) {
   }
 }
 
-// PRODUCTION DATABASE FUNCTIONS (Uncomment and configure as needed)
-
-// Supabase Integration
-// async function saveUserToSupabase(user) {
-//   const { createClient } = require('@supabase/supabase-js');
-//   const supabase = createClient(
-//     process.env.SUPABASE_URL,
-//     process.env.SUPABASE_ANON_KEY
-//   );
-//   
-//   const { data, error } = await supabase
-//     .from('users')
-//     .upsert([user], { onConflict: 'email' });
-//   
-//   if (error) throw error;
-//   console.log('User saved to Supabase:', user.email);
-// }
-
-// MongoDB Integration
-// async function saveUserToMongoDB(user) {
-//   const { MongoClient } = require('mongodb');
-//   const client = new MongoClient(process.env.MONGODB_URI);
-//   
-//   await client.connect();
-//   const db = client.db('pm-guide');
-//   const collection = db.collection('users');
-//   
-//   await collection.updateOne(
-//     { email: user.email },
-//     { $set: user },
-//     { upsert: true }
-//   );
-//   
-//   await client.close();
-//   console.log('User saved to MongoDB:', user.email);
-// }
-
-// PostgreSQL Integration
-// async function saveUserToPostgreSQL(user) {
-//   const { Pool } = require('pg');
-//   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-//   
-//   const query = `
-//     INSERT INTO users (email, username, password, access_level, created_at, subscription_status)
-//     VALUES ($1, $2, $3, $4, $5, $6)
-//     ON CONFLICT (email) DO UPDATE SET
-//       username = EXCLUDED.username,
-//       password = EXCLUDED.password,
-//       access_level = EXCLUDED.access_level,
-//       subscription_status = EXCLUDED.subscription_status
-//   `;
-//   
-//   await pool.query(query, [
-//     user.email, user.username, user.password, user.accessLevel,
-//     user.createdAt, user.subscriptionStatus
-//   ]);
-//   
-//   await pool.end();
-//   console.log('User saved to PostgreSQL:', user.email);
-// }
+// PRODUCTION: Save user to Supabase
+async function saveUserToSupabase(user) {
+  try {
+    console.log('Saving user to Supabase:', user.email);
+    
+    const { data, error } = await supabase
+      .from('users')
+      .upsert([user], { onConflict: 'email' });
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      throw error;
+    }
+    
+    console.log('User saved to Supabase successfully:', user.email);
+    return data;
+  } catch (error) {
+    console.error('Error saving to Supabase:', error);
+    throw error;
+  }
+}
 
 function generateSecurePassword() {
   try {

@@ -1,3 +1,11 @@
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client for frontend
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY
+);
+
 // Authorized users for the PM Guide system
 // Add or remove email addresses as needed
 export const authorizedUsers = [
@@ -26,18 +34,16 @@ export const isUserAuthorized = async (email) => {
     return true;
   }
   
-  // PRODUCTION: Check database for user
-  // Option 1: Supabase
-  // const user = await getUserFromSupabase(normalizedEmail);
-  // return user && user.subscriptionStatus === 'active';
-  
-  // Option 2: MongoDB
-  // const user = await getUserFromMongoDB(normalizedEmail);
-  // return user && user.subscriptionStatus === 'active';
-  
-  // Option 3: PostgreSQL
-  // const user = await getUserFromPostgreSQL(normalizedEmail);
-  // return user && user.subscriptionStatus === 'active';
+  // PRODUCTION: Check Supabase database for user
+  if (process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
+    try {
+      const user = await getUserFromSupabase(normalizedEmail);
+      return user && user.subscription_status === 'active';
+    } catch (error) {
+      console.error('Error checking user authorization:', error);
+      return false;
+    }
+  }
   
   // For now, we'll use a simple approach
   // In production, you'd want to check against a proper database
@@ -53,21 +59,21 @@ export const isUserAuthorized = async (email) => {
   return false;
 };
 
-// Get user from database (simplified for Vercel)
+// Get user from database (production with Supabase)
 export const getUserFromDatabase = async (email) => {
   if (!email) return null;
   
   const normalizedEmail = email.toLowerCase();
   
-  // PRODUCTION: Get user from database
-  // Option 1: Supabase
-  // return await getUserFromSupabase(normalizedEmail);
-  
-  // Option 2: MongoDB
-  // return await getUserFromMongoDB(normalizedEmail);
-  
-  // Option 3: PostgreSQL
-  // return await getUserFromPostgreSQL(normalizedEmail);
+  // PRODUCTION: Get user from Supabase
+  if (process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
+    try {
+      return await getUserFromSupabase(normalizedEmail);
+    } catch (error) {
+      console.error('Error getting user from database:', error);
+      return null;
+    }
+  }
   
   // For now, return a basic user object
   // In production, you'd query a real database
@@ -75,9 +81,9 @@ export const getUserFromDatabase = async (email) => {
     return {
       email: normalizedEmail,
       username: normalizedEmail.split('@')[0] + '_user',
-      accessLevel: 'full',
-      subscriptionStatus: 'active',
-      isDemo: false
+      access_level: 'full',
+      subscription_status: 'active',
+      is_demo: false
     };
   }
   
@@ -103,49 +109,23 @@ export const getUserRole = async (email) => {
   return 'user';
 };
 
-// PRODUCTION DATABASE FUNCTIONS (Uncomment and configure as needed)
-
-// Supabase Integration
-// async function getUserFromSupabase(email) {
-//   const { createClient } = require('@supabase/supabase-js');
-//   const supabase = createClient(
-//     process.env.SUPABASE_URL,
-//     process.env.SUPABASE_ANON_KEY
-//   );
-//   
-//   const { data, error } = await supabase
-//     .from('users')
-//     .select('*')
-//     .eq('email', email)
-//     .single();
-//   
-//   if (error) return null;
-//   return data;
-// }
-
-// MongoDB Integration
-// async function getUserFromMongoDB(email) {
-//   const { MongoClient } = require('mongodb');
-//   const client = new MongoClient(process.env.MONGODB_URI);
-//   
-//   await client.connect();
-//   const db = client.db('pm-guide');
-//   const collection = db.collection('users');
-//   
-//   const user = await collection.findOne({ email });
-//   await client.close();
-//   
-//   return user;
-// }
-
-// PostgreSQL Integration
-// async function getUserFromPostgreSQL(email) {
-//   const { Pool } = require('pg');
-//   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-//   
-//   const query = 'SELECT * FROM users WHERE email = $1';
-//   const result = await pool.query(query, [email]);
-//   
-//   await pool.end();
-//   return result.rows[0] || null;
-// } 
+// PRODUCTION: Get user from Supabase
+async function getUserFromSupabase(email) {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error getting user from Supabase:', error);
+    return null;
+  }
+} 
