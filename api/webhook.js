@@ -37,7 +37,19 @@ export default async function handler(req, res) {
   // Handle successful payment
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    console.log('Payment successful for:', session.customer_email);
+    console.log('Session data:', {
+      id: session.id,
+      customer_email: session.customer_email,
+      customer: session.customer,
+      payment_status: session.payment_status,
+      amount_total: session.amount_total
+    });
+    
+    // Check if we have a customer email
+    if (!session.customer_email) {
+      console.error('❌ No customer email found in session');
+      return res.status(400).json({ error: 'No customer email found' });
+    }
     
     try {
       // Generate credentials
@@ -57,6 +69,10 @@ export default async function handler(req, res) {
 
 // Generate user credentials
 async function createUserCredentials(email) {
+  if (!email || typeof email !== 'string') {
+    throw new Error('Invalid email provided');
+  }
+  
   const username = email.split('@')[0] + '_' + Date.now();
   const password = generateSecurePassword();
   
