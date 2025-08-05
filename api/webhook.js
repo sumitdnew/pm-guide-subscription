@@ -157,7 +157,8 @@ async function sendCredentialsEmail(email, credentials) {
   }
 
   try {
-    const transporter = nodemailer.createTransporter({
+    // Fix the nodemailer import issue
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
