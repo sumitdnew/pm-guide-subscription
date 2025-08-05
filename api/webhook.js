@@ -70,11 +70,24 @@ export default async function handler(req, res) {
     
     try {
       const credentials = await createUserCredentials(customerEmail);
-      await sendCredentialsEmail(customerEmail, credentials);
+      console.log('Credentials created successfully:', { username: credentials.username });
+      
+      try {
+        await sendCredentialsEmail(customerEmail, credentials);
+        console.log('Email sent successfully');
+      } catch (emailError) {
+        console.error('Email sending failed, but continuing:', emailError.message);
+        // Don't fail the whole process if email fails
+      }
+      
       console.log('Successfully created user and sent credentials');
     } catch (error) {
       console.error('Error processing payment:', error);
-      return res.status(500).json({ error: 'Failed to process payment' });
+      console.error('Error stack:', error.stack);
+      return res.status(500).json({ 
+        error: 'Failed to process payment',
+        details: error.message 
+      });
     }
   }
 
@@ -82,45 +95,59 @@ export default async function handler(req, res) {
 }
 
 async function createUserCredentials(email) {
+  console.log('Starting createUserCredentials for email:', email);
+  
   if (!email || typeof email !== 'string') {
     throw new Error('Invalid email provided');
   }
   
-  const username = email.split('@')[0] + '_' + Date.now();
-  const password = generateSecurePassword();
-  
-  const user = {
-    email: email.toLowerCase(),
-    username,
-    password,
-    accessLevel: 'full',
-    createdAt: new Date().toISOString(),
-    isDemo: false,
-    subscriptionStatus: 'active'
-  };
-  
-  // For Vercel, we'll just log the user creation
-  // In production, you'd want to use a proper database
-  console.log('User created:', {
-    email: user.email,
-    username: user.username,
-    accessLevel: user.accessLevel,
-    subscriptionStatus: user.subscriptionStatus
-  });
-  
-  return { username, password };
+  try {
+    const username = email.split('@')[0] + '_' + Date.now();
+    const password = generateSecurePassword();
+    
+    const user = {
+      email: email.toLowerCase(),
+      username,
+      password,
+      accessLevel: 'full',
+      createdAt: new Date().toISOString(),
+      isDemo: false,
+      subscriptionStatus: 'active'
+    };
+    
+    // For Vercel, we'll just log the user creation
+    // In production, you'd want to use a proper database
+    console.log('User created:', {
+      email: user.email,
+      username: user.username,
+      accessLevel: user.accessLevel,
+      subscriptionStatus: user.subscriptionStatus
+    });
+    
+    return { username, password };
+  } catch (error) {
+    console.error('Error in createUserCredentials:', error);
+    throw error;
+  }
 }
 
 function generateSecurePassword() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-  let password = '';
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  try {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    let password = '';
+    for (let i = 0; i < 12; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+  } catch (error) {
+    console.error('Error generating password:', error);
+    throw error;
   }
-  return password;
 }
 
 async function sendCredentialsEmail(email, credentials) {
+  console.log('Starting sendCredentialsEmail for:', email);
+  
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.warn('Email credentials not configured, skipping email send');
     console.log('Would send credentials to:', email);
