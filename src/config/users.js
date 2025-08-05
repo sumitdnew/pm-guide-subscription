@@ -30,7 +30,7 @@ export const isUserAuthorized = (email) => {
   // In production, you'd want to check against a proper database
   // For testing, we can add specific emails here
   const testUsers = [
-    'sumitdas.cse@gmail.com', // Add test users here
+    // 'sumitdas.cse@gmail.com', // Removed for testing
   ];
   
   if (testUsers.includes(normalizedEmail)) {
