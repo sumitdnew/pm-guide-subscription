@@ -60,15 +60,15 @@ export const isUserAuthorized = async (email) => {
 };
 
 // Get user from database (production with Supabase)
-export const getUserFromDatabase = async (email) => {
-  if (!email) return null;
+export const getUserFromDatabase = async (emailOrUsername) => {
+  if (!emailOrUsername) return null;
   
-  const normalizedEmail = email.toLowerCase();
+  const normalizedInput = emailOrUsername.toLowerCase();
   
   // PRODUCTION: Get user from Supabase
   if (process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
     try {
-      return await getUserFromSupabase(normalizedEmail);
+      return await getUserFromSupabase(normalizedInput);
     } catch (error) {
       console.error('Error getting user from database:', error);
       return null;
@@ -77,10 +77,10 @@ export const getUserFromDatabase = async (email) => {
   
   // For now, return a basic user object
   // In production, you'd query a real database
-  if (await isUserAuthorized(normalizedEmail)) {
+  if (await isUserAuthorized(normalizedInput)) {
     return {
-      email: normalizedEmail,
-      username: normalizedEmail.split('@')[0] + '_user',
+      email: normalizedInput,
+      username: normalizedInput.split('@')[0] + '_user',
       access_level: 'full',
       subscription_status: 'active',
       is_demo: false
@@ -110,17 +110,29 @@ export const getUserRole = async (email) => {
 };
 
 // PRODUCTION: Get user from Supabase
-async function getUserFromSupabase(email) {
+async function getUserFromSupabase(emailOrUsername) {
   try {
-    const { data, error } = await supabase
+    // First try to find by email
+    let { data, error } = await supabase
       .from('users')
       .select('*')
-      .eq('email', email)
+      .eq('email', emailOrUsername)
       .single();
     
     if (error) {
-      console.error('Supabase error:', error);
-      return null;
+      // If not found by email, try by username
+      const { data: usernameData, error: usernameError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', emailOrUsername)
+        .single();
+      
+      if (usernameError) {
+        console.error('Supabase error:', usernameError);
+        return null;
+      }
+      
+      return usernameData;
     }
     
     return data;

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, Briefcase, ArrowRight, Shield, Play } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Briefcase, ArrowRight, Shield, Play, User } from 'lucide-react';
 import { getUserFromDatabase } from '../config/users';
 
 const Auth = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
+  const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -25,10 +25,10 @@ const Auth = ({ onLogin }) => {
     
     try {
       // Check if user exists in database
-      const user = await getUserFromDatabase(email);
+      const user = await getUserFromDatabase(emailOrUsername);
       
       if (!user) {
-        setError('User not found. Please check your email or contact support.');
+        setError('User not found. Please check your credentials or contact support.');
         return;
       }
       
@@ -87,16 +87,16 @@ const Auth = ({ onLogin }) => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+                Email or Username
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  value={emailOrUsername}
+                  onChange={(e) => setEmailOrUsername(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-500"
-                  placeholder="Enter your email"
+                  placeholder="Enter your email or username"
                   required
                   disabled={isLoading}
                 />
