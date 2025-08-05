@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, Briefcase, ArrowRight, Shield, Play } from 'lucide-react';
-import { isUserAuthorized } from '../config/users';
+import { getUserFromDatabase } from '../config/users';
 
 const Auth = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDemoLogin = () => {
     const demoUser = { 
@@ -17,18 +18,47 @@ const Auth = ({ onLogin }) => {
     onLogin(demoUser);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
     
-    if (!isUserAuthorized(email)) {
-      setError('Access denied. Please contact the administrator for access.');
-      return;
+    try {
+      // Check if user exists in database
+      const user = await getUserFromDatabase(email);
+      
+      if (!user) {
+        setError('User not found. Please check your email or contact support.');
+        return;
+      }
+      
+      // Check if password matches
+      if (user.password !== password) {
+        setError('Invalid password. Please check your credentials.');
+        return;
+      }
+      
+      // Check if subscription is active
+      if (user.subscription_status !== 'active') {
+        setError('Your subscription is not active. Please contact support.');
+        return;
+      }
+      
+      // Login successful
+      const loginUser = { 
+        email: user.email, 
+        name: user.username,
+        accessLevel: user.access_level,
+        isDemo: false 
+      };
+      onLogin(loginUser);
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Login failed. Please try again or contact support.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    // Simple login - just create a user object
-    const user = { email, name: email.split('@')[0] };
-    onLogin(user);
   };
 
   return (
@@ -50,7 +80,7 @@ const Auth = ({ onLogin }) => {
           {/* Access Control Notice */}
           <div className="flex items-center justify-center space-x-2 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <Shield className="h-5 w-5 text-blue-600" />
-            <span className="text-sm font-medium text-blue-800">Restricted Access - Admin Only</span>
+            <span className="text-sm font-medium text-blue-800">Login with your credentials</span>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -68,6 +98,7 @@ const Auth = ({ onLogin }) => {
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-500"
                   placeholder="Enter your email"
                   required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -85,11 +116,13 @@ const Auth = ({ onLogin }) => {
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-500"
                   placeholder="Enter your password"
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  disabled={isLoading}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -108,10 +141,20 @@ const Auth = ({ onLogin }) => {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all flex items-center justify-center space-x-2"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>Sign In</span>
-              <ArrowRight className="h-4 w-4" />
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Signing In...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
             </button>
           </form>
 
@@ -127,7 +170,8 @@ const Auth = ({ onLogin }) => {
             </div>
             <button
               onClick={handleDemoLogin}
-              className="w-full mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all flex items-center justify-center space-x-2"
+              disabled={isLoading}
+              className="w-full mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
             >
               <Play className="h-4 w-4" />
               <span>Try Demo Version</span>
@@ -137,7 +181,7 @@ const Auth = ({ onLogin }) => {
           {/* Footer */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-500">
-              Contact administrator for access
+              Use the credentials from your welcome email
             </p>
           </div>
         </div>
