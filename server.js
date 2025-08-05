@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
@@ -5,31 +6,67 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-app.use(express.json());
 
-// Webhook endpoint
+// Webhook endpoint - must be before express.json() middleware
 app.post('/webhook', async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    // Get the raw body for webhook signature verification
+    const chunks = [];
+    req.on('data', chunk => chunks.push(chunk));
+    await new Promise((resolve, reject) => {
+      req.on('end', resolve);
+      req.on('error', reject);
+    });
+    const rawBody = Buffer.concat(chunks).toString('utf8');
+    
+    console.log('Webhook signature verification starting...');
+    console.log('Raw body length:', rawBody.length);
+    console.log('Stripe signature header:', !!sig);
+    console.log('Webhook secret configured:', !!process.env.STRIPE_WEBHOOK_SECRET);
+    
+    // Use environment variable or fallback to test secret
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_test_secret_for_testing';
+    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+    console.log('✅ Webhook signature verification successful!');
   } catch (err) {
-    console.error('Webhook signature verification failed:', err.message);
+    console.error('❌ Webhook signature verification failed:', err.message);
+    console.error('Error details:', err);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   // Handle successful payment
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    console.log('Payment successful for:', session.customer_email);
+    
+    // Get customer email from the correct location
+    let customerEmail = session.customer_email;
+    if (!customerEmail && session.customer_details && session.customer_details.email) {
+      customerEmail = session.customer_details.email;
+    }
+    
+    console.log('Payment successful for:', customerEmail);
+    console.log('Payment status:', session.payment_status);
+    
+    // Only process if payment is actually paid
+    if (session.payment_status !== 'paid') {
+      console.log('Payment not completed, skipping user creation');
+      return res.json({ received: true });
+    }
+    
+    if (!customerEmail) {
+      console.error('No customer email found in session');
+      return res.status(400).json({ error: 'No customer email found' });
+    }
     
     try {
       // Generate credentials
-      const credentials = await createUserCredentials(session.customer_email);
+      const credentials = await createUserCredentials(customerEmail);
       
       // Send email
-      await sendCredentialsEmail(session.customer_email, credentials);
+      await sendCredentialsEmail(customerEmail, credentials);
       
       console.log('✅ Payment processed and credentials sent!');
     } catch (error) {
@@ -39,6 +76,9 @@ app.post('/webhook', async (req, res) => {
 
   res.json({received: true});
 });
+
+// Add express.json() middleware after webhook endpoint
+app.use(express.json());
 
 // Generate user credentials
 async function createUserCredentials(email) {

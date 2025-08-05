@@ -40,9 +40,17 @@ export default async function handler(req, res) {
     });
     const rawBody = Buffer.concat(chunks).toString('utf8');
     
+    console.log('Webhook signature verification starting...');
+    console.log('Raw body length:', rawBody.length);
+    console.log('Stripe signature header:', !!sig);
+    console.log('Webhook secret configured:', !!process.env.STRIPE_WEBHOOK_SECRET);
+    console.log('Webhook secret preview:', process.env.STRIPE_WEBHOOK_SECRET ? process.env.STRIPE_WEBHOOK_SECRET.substring(0, 10) + '...' : 'NOT_SET');
+    
     event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    console.log('✅ Webhook signature verification successful!');
   } catch (err) {
-    console.error('Webhook signature verification failed:', err.message);
+    console.error('❌ Webhook signature verification failed:', err.message);
+    console.error('Error details:', err);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
