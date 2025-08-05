@@ -4,11 +4,15 @@
   "private": true,
   "dependencies": {
     "@stripe/stripe-js": "^7.6.1",
+    "concurrently": "^9.2.0",
+    "express": "^4.21.2",
     "firebase": "^12.0.0",
     "lucide-react": "^0.263.1",
+    "nodemailer": "^7.0.5",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-scripts": "5.0.1",
+    "stripe": "^14.25.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -16,7 +20,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "serve": "serve -s build"
+    "serve": "serve -s build",
+    "server": "node server.js",
+    "dev": "concurrently \"npm run start\" \"npm run server\""
   },
   "eslintConfig": {
     "extends": [
@@ -35,5 +41,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
   }
 }

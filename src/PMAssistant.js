@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { ChevronRight, Calculator } from 'lucide-react';
+import { ChevronRight, Calculator, Sparkles, Target, TrendingUp, Users } from 'lucide-react';
 import FrameworkSimulator from './FrameworkSimulator';
 import RecommendationsView from './RecommendationsView';
 import { frameworkDatabase, questions } from './data';
 
-const PMAssistant = () => {
+const PMAssistant = ({ isDemo = false }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState({});
   const [recommendations, setRecommendations] = useState(null);
@@ -12,7 +12,7 @@ const PMAssistant = () => {
   const [selectedSimulator, setSelectedSimulator] = useState('');
 
   const generateRecommendations = () => {
-    const { stage, type, challenge, timeline, resources } = responses;
+    const { stage, type, challenge, timeline } = responses;
     
     let phase = 'discovery';
     if (stage === 'discovery') phase = 'discovery';
@@ -100,18 +100,19 @@ const PMAssistant = () => {
     }
 
     setRecommendations({
-      phase,
-      frameworks: frameworksData, // Pass the entire frameworks object structure
+      frameworks: frameworksData,
       actions,
       priorities,
-      timeline,
-      type
+      phase
     });
   };
 
   const handleAnswer = (value) => {
-    const newResponses = { ...responses, [questions[currentStep].id]: value };
-    setResponses(newResponses);
+    const question = questions[currentStep];
+    setResponses(prev => ({
+      ...prev,
+      [question.id]: value
+    }));
     
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -124,10 +125,21 @@ const PMAssistant = () => {
     setCurrentStep(0);
     setResponses({});
     setRecommendations(null);
+    setShowSimulator(false);
+    setSelectedSimulator('');
   };
 
   if (showSimulator) {
-    return <FrameworkSimulator onBack={() => setShowSimulator(false)} initialSimulator={selectedSimulator} />;
+    return (
+      <FrameworkSimulator 
+        framework={selectedSimulator} 
+        isDemo={isDemo}
+        onBack={() => {
+          setShowSimulator(false);
+          setSelectedSimulator('');
+        }}
+      />
+    );
   }
 
   if (recommendations) {
@@ -135,86 +147,114 @@ const PMAssistant = () => {
       <RecommendationsView 
         recommendations={recommendations}
         onReset={reset}
-        onOpenSimulator={(simulatorId) => {
-          setSelectedSimulator(simulatorId);
+        onOpenSimulator={(framework) => {
+          setSelectedSimulator(framework);
           setShowSimulator(true);
         }}
       />
     );
   }
 
+  const currentQuestion = questions[currentStep];
+  const progress = ((currentStep + 1) / questions.length) * 100;
+
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white">
+    <div className="max-w-4xl mx-auto">
+      {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Product Management Assistant</h1>
-        <p className="text-gray-600">Answer a few questions to get personalized framework recommendations</p>
+        <div className="flex items-center justify-center space-x-2 mb-4">
+          <Sparkles className="h-6 w-6 text-blue-600" />
+          <h1 className="text-3xl font-bold text-gray-900">PM Assistant</h1>
+        </div>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Get personalized product management recommendations and frameworks based on your current challenges and goals.
+        </p>
       </div>
 
+      {/* Progress Bar */}
       <div className="mb-8">
-        <button
-          onClick={() => setShowSimulator(true)}
-          className="w-full p-4 bg-green-100 border-2 border-green-200 rounded-lg hover:border-green-400 transition-colors text-left"
-        >
-          <div className="flex items-center">
-            <Calculator className="h-6 w-6 text-green-600 mr-3" />
-            <div>
-              <h3 className="text-lg font-semibold text-green-900">Open Framework Simulators</h3>
-              <p className="text-green-700 text-sm">Practice with all 23 interactive PM frameworks</p>
-            </div>
-          </div>
-        </button>
-      </div>
-
-      <div className="mb-8">
-        <div className="flex justify-between text-sm text-gray-500 mb-2">
-          <span>Question {currentStep + 1} of {questions.length}</span>
-          <span>{Math.round(((currentStep + 1) / questions.length) * 100)}% Complete</span>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-gray-700">Progress</span>
+          <span className="text-sm text-gray-500">{currentStep + 1} of {questions.length}</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
-          />
+            className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          ></div>
         </div>
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          {questions[currentStep].question}
-        </h2>
-        <div className="space-y-3">
-          {questions[currentStep].options.map((option) => (
+      {/* Question Card */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8">
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl mb-4">
+            <Target className="h-6 w-6 text-white" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">{currentQuestion.question}</h2>
+          {currentQuestion.description && (
+            <p className="text-gray-600">{currentQuestion.description}</p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {currentQuestion.options.map((option, index) => (
             <button
-              key={option.value}
+              key={index}
               onClick={() => handleAnswer(option.value)}
-              className="w-full text-left p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+              className="p-6 text-left border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 group"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-gray-800">{option.label}</span>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                  <span className="text-sm font-medium text-gray-600 group-hover:text-blue-600">
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-gray-900 mb-1">{option.label}</h3>
+                  {option.description && (
+                    <p className="text-sm text-gray-600">{option.description}</p>
+                  )}
+                </div>
+                <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
               </div>
             </button>
           ))}
         </div>
       </div>
 
-      {currentStep > 0 && (
-        <div className="bg-blue-50 rounded-lg p-4">
-          <h3 className="font-semibold text-blue-900 mb-2">Your Answers:</h3>
-          <div className="space-y-1">
-            {Object.entries(responses).map(([key, value]) => {
-              const question = questions.find(q => q.id === key);
-              const option = question?.options.find(o => o.value === value);
-              return (
-                <div key={key} className="text-sm text-blue-800">
-                  <span className="font-medium">{question?.question}</span>
-                  <span className="ml-2">{option?.label}</span>
-                </div>
-              );
-            })}
+      {/* Features Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Calculator className="h-4 w-4 text-blue-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900">Frameworks</h3>
           </div>
+          <p className="text-sm text-gray-600">Access proven PM frameworks and methodologies</p>
         </div>
-      )}
+
+        <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="h-4 w-4 text-purple-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900">Recommendations</h3>
+          </div>
+          <p className="text-sm text-gray-600">Get personalized advice for your challenges</p>
+        </div>
+
+        <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <Users className="h-4 w-4 text-green-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900">Case Studies</h3>
+          </div>
+          <p className="text-sm text-gray-600">Learn from real-world product examples</p>
+        </div>
+      </div>
     </div>
   );
 };

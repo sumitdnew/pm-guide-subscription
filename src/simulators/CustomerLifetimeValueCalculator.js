@@ -64,7 +64,7 @@ const CustomerLifetimeValueCalculator = () => {
   const getCLVInsights = (results) => {
     if (!results) return null;
 
-    const { netCLV, roi, paybackPeriod } = results;
+    const { netCLV, roi } = results;
     
     if (netCLV > 1000 && roi > 300) {
       return {

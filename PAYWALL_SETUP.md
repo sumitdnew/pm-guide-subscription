@@ -40,9 +40,10 @@ For production, you'll need a backend to handle Stripe webhooks. You can use:
 ### User Flow:
 1. **Landing Page** → User sees login/signup
 2. **Authentication** → User creates account or logs in
-3. **Payment Screen** → New users see $10/month subscription
-4. **Main App** → Authenticated users with active subscription
-5. **Logout** → Clear session and return to auth
+3. **Trial Period** → New users get 3-day free trial
+4. **Payment Screen** → Users see payment after trial expires
+5. **Main App** → Authenticated users with active subscription
+6. **Logout** → Clear session and return to auth
 
 ## 💳 Stripe Integration Steps
 
@@ -74,7 +75,8 @@ For production, you'll need a backend to handle Stripe webhooks. You can use:
 
 ## 🎯 Pricing Strategy
 
-### Current Plan: $10/month
+### Current Plan: $9.99/month
+- **3-Day Free Trial** - No credit card required
 - **All 20+ Framework Simulators**
 - **15+ Real-World Case Studies**
 - **Phase-based Filtering**
@@ -83,7 +85,7 @@ For production, you'll need a backend to handle Stripe webhooks. You can use:
 
 ### Future Expansion Options:
 - **Free Tier**: 3 basic frameworks
-- **Pro Tier**: $10/month (current)
+- **Pro Tier**: $9.99/month with 3-day trial (current)
 - **Enterprise**: $29/month (team features)
 
 ## 🔒 Security Considerations

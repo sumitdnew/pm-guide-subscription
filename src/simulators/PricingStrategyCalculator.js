@@ -18,8 +18,7 @@ const PricingStrategyCalculator = () => {
       targetMargin, 
       competitorPrice, 
       perceivedValue, 
-      marketSize, 
-      elasticity 
+      marketSize
     } = inputs;
     
     if (!costOfGoods || !targetMargin) return null;
@@ -30,7 +29,6 @@ const PricingStrategyCalculator = () => {
     const compPrice = parseFloat(competitorPrice) || 0;
     const value = parseFloat(perceivedValue) || 0;
     const size = parseFloat(marketSize) || 0;
-    const elastic = parseFloat(elasticity) || 1;
 
     // Cost-plus pricing
     const costPlusPrice = cog / (1 - margin / 100);
@@ -42,25 +40,25 @@ const PricingStrategyCalculator = () => {
     const competitivePrice = compPrice > 0 ? compPrice : costPlusPrice;
     
     // Optimal price (average of methods)
-    const optimalPrice = (costPlusPrice + valueBasedPrice + competitivePrice) / 3;
+    const calculatedOptimalPrice = (costPlusPrice + valueBasedPrice + competitivePrice) / 3;
     
     // Profit calculations
-    const profitPerUnit = optimalPrice - cog;
-    const profitMargin = (profitPerUnit / optimalPrice) * 100;
+    const profitPerUnit = calculatedOptimalPrice - cog;
+    const profitMargin = (profitPerUnit / calculatedOptimalPrice) * 100;
     
     // Revenue projections
-    const estimatedRevenue = optimalPrice * (size || 1000);
+    const estimatedRevenue = calculatedOptimalPrice * (size || 1000);
     const totalProfit = profitPerUnit * (size || 1000);
     
     // Break-even analysis
     const breakEvenUnits = fixed / profitPerUnit;
-    const breakEvenRevenue = breakEvenUnits * optimalPrice;
+    const breakEvenRevenue = breakEvenUnits * calculatedOptimalPrice;
 
     return {
       costPlusPrice,
       valueBasedPrice,
       competitivePrice,
-      optimalPrice,
+      optimalPrice: calculatedOptimalPrice,
       profitPerUnit,
       profitMargin,
       estimatedRevenue,
@@ -76,7 +74,7 @@ const PricingStrategyCalculator = () => {
   const getPricingInsights = (results) => {
     if (!results) return null;
 
-    const { profitMargin, optimalPrice, competitorPrice } = results;
+    const { profitMargin } = results;
     
     if (profitMargin > 50) {
       return {

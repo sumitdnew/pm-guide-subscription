@@ -15,19 +15,17 @@ const CohortAnalysisCalculator = () => {
   };
 
   const calculateCohortMetrics = () => {
-    const { cohortSize, retentionRates, timePeriod } = inputs;
+    const { cohortSize, retentionRates } = inputs;
     if (!cohortSize || retentionRates.every(rate => !rate)) return null;
 
     const rates = retentionRates.map(rate => parseFloat(rate) || 0).filter(rate => rate > 0);
     const totalRetention = rates.reduce((sum, rate) => sum + rate, 0);
     const averageRetention = rates.length > 0 ? totalRetention / rates.length : 0;
-    const churnRate = 100 - averageRetention;
     const lifetimeValue = (parseFloat(cohortSize) * averageRetention / 100) || 0;
 
     return {
       rates,
       averageRetention,
-      churnRate,
       lifetimeValue,
       totalRetention
     };
@@ -36,7 +34,7 @@ const CohortAnalysisCalculator = () => {
   const getRetentionInsights = (metrics) => {
     if (!metrics) return null;
 
-    const { averageRetention, churnRate } = metrics;
+    const { averageRetention } = metrics;
     
     if (averageRetention >= 80) {
       return {

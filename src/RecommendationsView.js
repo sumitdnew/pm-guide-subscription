@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, AlertCircle, Lightbulb, CheckCircle, Rocket, Zap, Calculator, ChevronRight, ExternalLink, BookOpen, FileText, Settings, Code, Users } from 'lucide-react';
+import { Target, Lightbulb, CheckCircle, Rocket, Calculator, ExternalLink, BookOpen, FileText, Settings, Code, Users, ArrowLeft, Star, TrendingUp, Users as UsersIcon, Building2 } from 'lucide-react';
 
 // Mapping between framework names in database and simulator IDs
 const frameworkToSimulatorMap = {
@@ -25,7 +25,20 @@ const frameworkToSimulatorMap = {
   'Design Thinking': 'designthinking',
   'Value Proposition Canvas': 'valueprop',
   'Go-to-Market Strategy': 'gtm',
-  'Growth Hacking': 'growthhacking'
+  'Growth Hacking': 'growthhacking',
+  // Additional mappings based on actual framework names in data
+  'Strategic Formula': 'strategy',
+  'Segmentation Framework': 'segmentation',
+  '4 Types of PMF': 'pmf',
+  'Problem-Solution Fit Canvas': 'problemsolution',
+  'Persona Development': 'persona',
+  'Lean Startup': 'leanstartup',
+  'Design Sprint': 'designsprint',
+  'Beta Testing Framework': 'betatesting',
+  'Viral Coefficient': 'viralcoefficient',
+  'Platform Strategy': 'platformstrategy',
+  'International Expansion': 'international',
+  'Network Effects': 'networkeffects'
 };
 
 const RecommendationsView = ({ recommendations, onReset, onOpenSimulator }) => {
@@ -66,10 +79,12 @@ const RecommendationsView = ({ recommendations, onReset, onOpenSimulator }) => {
     // Handle if framework is just a string
     if (typeof framework === 'string') {
       return (
-        <div key={index} className="bg-white rounded-lg border border-purple-200 p-4">
+        <div key={index} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all duration-200 group">
           <div className="flex items-center">
-            <ChevronRight className="h-4 w-4 mr-2 text-purple-600" />
-            <span className="text-purple-700 font-medium">{framework}</span>
+            <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg mr-3">
+              <Star className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-gray-900 font-medium">{framework}</span>
           </div>
         </div>
       );
@@ -81,192 +96,229 @@ const RecommendationsView = ({ recommendations, onReset, onOpenSimulator }) => {
 
     // Handle framework object with resources
     return (
-      <div key={index} className="bg-white rounded-lg border border-purple-200 p-4">
+      <div key={index} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-lg transition-all duration-300 group">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="text-lg font-semibold text-purple-900">{framework.name}</h4>
-              {hasSimulator && (
-                <button
-                  onClick={() => onOpenSimulator(simulatorId)}
-                  className="flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors"
-                >
-                  <Calculator className="h-4 w-4 mr-1" />
-                  Try Simulator
-                </button>
-              )}
-            </div>
-            <p className="text-purple-700 mb-2">{framework.description}</p>
-            <p className="text-sm text-purple-600 font-medium">
-              <span className="text-purple-500">Best for:</span> {framework.useCase}
-            </p>
-          </div>
-          
-          {/* Learning Resources */}
-          {framework.resources && framework.resources.length > 0 && (
-            <div className="lg:w-80">
-              <h5 className="text-sm font-semibold text-purple-700 mb-3">Learning Resources:</h5>
-              <div className="space-y-2">
-                {framework.resources.map((resource, resourceIndex) => (
-                  <a
-                    key={resourceIndex}
-                    href={resource.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg border transition-colors ${getResourceColor(resource.type)}`}
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <h4 className="text-xl font-semibold text-gray-900 mb-2">{framework.name}</h4>
+                <p className="text-gray-600 mb-3 leading-relaxed">{framework.description}</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 ml-4">
+                {hasSimulator && (
+                  <button
+                    onClick={() => onOpenSimulator(simulatorId)}
+                    className="flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-sm font-medium hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-sm hover:shadow-md"
                   >
-                    {getResourceIcon(resource.type)}
-                    <span className="text-sm font-medium flex-1">{resource.title}</span>
-                    <ExternalLink className="h-3 w-3 opacity-60" />
-                  </a>
-                ))}
+                    <Calculator className="h-4 w-4 mr-2" />
+                    Try Simulator
+                  </button>
+                )}
+                <button
+                  onClick={() => onOpenSimulator(`${simulatorId || framework.name.toLowerCase().replace(/\s+/g, '-')}-case-study`)}
+                  className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg text-sm font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  <Building2 className="h-4 w-4 mr-2" />
+                  View Case Study
+                </button>
               </div>
             </div>
-          )}
+            
+            {framework.resources && framework.resources.length > 0 && (
+              <div className="mt-4">
+                <h5 className="text-sm font-medium text-gray-700 mb-3">Resources:</h5>
+                <div className="flex flex-wrap gap-2">
+                  {framework.resources.map((resource, resourceIndex) => (
+                    <a
+                      key={resourceIndex}
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${getResourceColor(resource.type)}`}
+                    >
+                      {getResourceIcon(resource.type)}
+                      <span className="ml-1.5">{resource.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white">
+    <div className="max-w-6xl mx-auto">
+      {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Personalized PM Action Plan</h1>
-        <p className="text-gray-600">Based on your responses, here's what you should focus on:</p>
+        <div className="flex items-center justify-center space-x-2 mb-4">
+          <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl">
+            <Target className="h-6 w-6 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900">Your Recommendations</h1>
+        </div>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Based on your responses, here are personalized frameworks and actionable steps for your product management journey.
+        </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
-          <div className="flex items-center mb-4">
-            <Target className="h-6 w-6 text-blue-600 mr-2" />
-            <h2 className="text-xl font-semibold text-blue-900">Current Phase</h2>
-          </div>
-          <div className="text-2xl font-bold text-blue-800 capitalize mb-2">
-            {recommendations.phase}
-          </div>
-          <p className="text-blue-700">
-            {recommendations.phase === 'discovery' && 'Focus on understanding customer problems and validating opportunities'}
-            {recommendations.phase === 'strategy' && 'Define your market position and differentiation strategy'}
-            {recommendations.phase === 'planning' && 'Prioritize features and create execution roadmaps'}
-            {recommendations.phase === 'development' && 'Build and iterate based on customer feedback'}
-            {recommendations.phase === 'launch' && 'Execute go-to-market strategy and acquire first customers'}
-            {recommendations.phase === 'growth' && 'Scale user base and optimize key metrics'}
-            {recommendations.phase === 'scale' && 'Expand into new markets and build platform advantages'}
-          </p>
-        </div>
-
-        <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-          <div className="flex items-center mb-4">
-            <AlertCircle className="h-6 w-6 text-green-600 mr-2" />
-            <h2 className="text-xl font-semibold text-green-900">Top Priorities</h2>
-          </div>
-          <div className="space-y-2">
-            {recommendations.priorities.map((priority, index) => (
-              <div key={index} className="flex items-center">
-                <div className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
-                  {index + 1}
-                </div>
-                <span className="text-green-800 font-medium">{priority}</span>
+      {/* Phase Information - Moved to top */}
+      {recommendations.phase && (
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6 border border-orange-100">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
+                <Lightbulb className="h-5 w-5 text-white" />
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8 bg-purple-50 rounded-lg p-6 border border-purple-200">
-        <div className="flex items-center mb-6">
-          <Lightbulb className="h-6 w-6 text-purple-600 mr-2" />
-          <h2 className="text-xl font-semibold text-purple-900">Recommended Frameworks</h2>
-        </div>
-        
-        {/* Primary Frameworks */}
-        {recommendations.frameworks.primary && recommendations.frameworks.primary.length > 0 && (
-          <div className="mb-6">
-            <h3 className="font-semibold text-purple-800 mb-4 text-lg">🎯 Primary Frameworks:</h3>
-            <div className="space-y-4">
-              {recommendations.frameworks.primary.map((framework, index) => 
-                renderFrameworkCard(framework, index)
-              )}
+              <h2 className="text-xl font-semibold text-gray-900">Current Phase</h2>
             </div>
-          </div>
-        )}
-
-        {/* Secondary and Advanced Frameworks */}
-        <div className="space-y-6">
-          {recommendations.frameworks.secondary && recommendations.frameworks.secondary.length > 0 && (
-            <div>
-              <h3 className="font-semibold text-purple-800 mb-4 text-lg">🔧 Supporting Frameworks:</h3>
-              <div className="space-y-4">
-                {recommendations.frameworks.secondary.map((framework, index) => 
-                  renderFrameworkCard(framework, index)
-                )}
-              </div>
-            </div>
-          )}
-          
-          {recommendations.frameworks.advanced && recommendations.frameworks.advanced.length > 0 && (
-            <div>
-              <h3 className="font-semibold text-purple-800 mb-4 text-lg">⚡ Advanced Frameworks:</h3>
-              <div className="space-y-4">
-                {recommendations.frameworks.advanced.map((framework, index) => 
-                  renderFrameworkCard(framework, index)
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-8 bg-orange-50 rounded-lg p-6 border border-orange-200">
-        <div className="flex items-center mb-4">
-          <CheckCircle className="h-6 w-6 text-orange-600 mr-2" />
-          <h2 className="text-xl font-semibold text-orange-900">Immediate Action Items</h2>
-        </div>
-        <div className="space-y-3">
-          {recommendations.actions.map((action, index) => (
-            <div key={index} className="flex items-start">
-              <input 
-                type="checkbox" 
-                className="mt-1 mr-3 h-4 w-4 text-orange-600 rounded"
-              />
-              <span className="text-orange-800">{action}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {recommendations.frameworks.tools && recommendations.frameworks.tools.length > 0 && (
-        <div className="mt-8 bg-indigo-50 rounded-lg p-6 border border-indigo-200">
-          <div className="flex items-center mb-4">
-            <Rocket className="h-6 w-6 text-indigo-600 mr-2" />
-            <h2 className="text-xl font-semibold text-indigo-900">Recommended AI Tools</h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            {recommendations.frameworks.tools.map((tool, index) => (
-              <div key={index} className="flex items-center p-3 bg-white rounded-lg border border-indigo-200">
-                <Zap className="h-4 w-4 text-indigo-600 mr-2" />
-                <span className="text-indigo-800 text-sm">{tool}</span>
-              </div>
-            ))}
+            <p className="text-gray-700 capitalize">
+              You're currently in the <span className="font-semibold text-orange-600">{recommendations.phase}</span> phase of your product journey.
+            </p>
           </div>
         </div>
       )}
 
-      <div className="mt-8 text-center space-x-4">
+      {/* Back Button */}
+      <div className="mb-6">
         <button
           onClick={onReset}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
         >
-          Get New Recommendations
-        </button>
-        <button
-          onClick={() => onOpenSimulator('')}
-          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-        >
-          <Calculator className="h-5 w-5 inline mr-2" />
-          Open Framework Simulator
+          <ArrowLeft className="h-4 w-4" />
+          <span>Start Over</span>
         </button>
       </div>
+
+      {/* Priority Actions Section */}
+      {recommendations.actions && recommendations.actions.length > 0 && (
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg">
+                <Rocket className="h-5 w-5 text-white" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900">Priority Actions</h2>
+            </div>
+            <div className="space-y-3">
+              {recommendations.actions.map((action, index) => (
+                <div key={index} className="flex items-start space-x-3">
+                  <div className="flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full mt-0.5">
+                    <span className="text-xs font-medium text-blue-600">{index + 1}</span>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed">{action}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Key Priorities Section */}
+      {recommendations.priorities && recommendations.priorities.length > 0 && (
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-white" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900">Key Priorities</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {recommendations.priorities.map((priority, index) => (
+                <div key={index} className="bg-white rounded-lg p-4 border border-green-200 shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span className="font-medium text-gray-900">{priority}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Frameworks Section */}
+      {recommendations.frameworks && (
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
+                  <UsersIcon className="h-5 w-5 text-white" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900">Recommended Frameworks</h2>
+              </div>
+              <button
+                onClick={() => onOpenSimulator('all')}
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg text-sm font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                <Calculator className="h-4 w-4 mr-2" />
+                Open All Simulators
+              </button>
+            </div>
+            
+            {(() => {
+              if (Array.isArray(recommendations.frameworks)) {
+                return (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {recommendations.frameworks.map((framework, index) => renderFrameworkCard(framework, index))}
+                  </div>
+                );
+              } else if (recommendations.frameworks && typeof recommendations.frameworks === 'object') {
+                // Handle the structure with primary, secondary, advanced sections
+                return (
+                  <div className="space-y-8">
+                    {/* Primary Frameworks */}
+                    {recommendations.frameworks.primary && recommendations.frameworks.primary.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          Primary Frameworks
+                        </h3>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {recommendations.frameworks.primary.map((framework, index) => renderFrameworkCard(framework, index))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Secondary Frameworks */}
+                    {recommendations.frameworks.secondary && recommendations.frameworks.secondary.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          Secondary Frameworks
+                        </h3>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {recommendations.frameworks.secondary.map((framework, index) => renderFrameworkCard(framework, index))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Advanced Frameworks */}
+                    {recommendations.frameworks.advanced && recommendations.frameworks.advanced.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          Advanced Frameworks
+                        </h3>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {recommendations.frameworks.advanced.map((framework, index) => renderFrameworkCard(framework, index))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              return null;
+            })()}
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 };

@@ -388,187 +388,210 @@ export const questions = [
   export const simulatorConfigs = [
     {
       id: 'rice',
-      title: 'RICE Calculator',
+      name: 'RICE Calculator',
       description: 'Calculate prioritization scores using Reach × Impact × Confidence / Effort',
       color: 'blue',
       icon: 'Calculator',
-      phases: ['planning', 'development', 'growth']
+      phases: ['planning', 'development', 'growth'],
+      category: 'Prioritization'
     },
     {
       id: 'ice',
-      title: 'ICE Scoring',
+      name: 'ICE Scoring',
       description: 'Simpler prioritization using Impact × Confidence × Ease scoring',
       color: 'purple',
       icon: 'Calculator',
-      phases: ['planning', 'development', 'growth']
+      phases: ['planning', 'development', 'growth'],
+      category: 'Prioritization'
     },
     {
       id: 'jtbd',
-      title: 'JTBD Story Generator',
+      name: 'JTBD Story Generator',
       description: 'Generate Jobs-to-be-Done user stories and interview scripts',
       color: 'green',
       icon: 'FileText',
-      phases: ['discovery', 'strategy']
+      phases: ['discovery', 'strategy'],
+      category: 'User Research'
     },
     {
       id: 'forces',
-      title: '4 Forces of Progress',
+      name: '4 Forces of Progress',
       description: 'Analyze customer behavior change forces and adoption barriers',
       color: 'red',
       icon: 'GitBranch',
-      phases: ['discovery', 'strategy']
+      phases: ['discovery', 'strategy'],
+      category: 'Strategy'
     },
     {
       id: 'kano',
-      title: 'Kano Model Analyzer',
+      name: 'Kano Model Analyzer',
       description: 'Categorize features as Basic, Performance, or Delight needs',
       color: 'yellow',
       icon: 'Star',
-      phases: ['planning', 'development']
+      phases: ['planning', 'development'],
+      category: 'Feature Analysis'
     },
     {
       id: 'pmf',
-      title: 'PMF Measurement',
+      name: 'PMF Measurement',
       description: 'Sean Ellis Product-Market Fit survey analyzer',
       color: 'teal',
       icon: 'BarChart3',
-      phases: ['discovery', 'strategy', 'development']
+      phases: ['discovery', 'strategy', 'development'],
+      category: 'Validation'
     },
     {
       id: 'swot',
-      title: 'SWOT Analysis',
+      name: 'SWOT Analysis',
       description: 'Analyze Strengths, Weaknesses, Opportunities, and Threats',
       color: 'indigo',
       icon: 'Compass',
-      phases: ['strategy', 'planning']
+      phases: ['strategy', 'planning'],
+      category: 'Strategy'
     },
     {
       id: 'aarrr',
-      title: 'AARRR Metrics',
+      name: 'AARRR Metrics',
       description: 'Track Acquisition, Activation, Retention, Revenue, Referral',
       color: 'orange',
       icon: 'Rocket',
-      phases: ['launch', 'growth', 'scale']
+      phases: ['launch', 'growth', 'scale'],
+      category: 'Growth'
     },
     {
       id: 'okr',
-      title: 'OKR Generator',
+      name: 'OKR Generator',
       description: 'Create Objectives and Key Results with best practices',
       color: 'cyan',
       icon: 'Target',
-      phases: ['planning', 'development', 'growth', 'scale']
+      phases: ['planning', 'development', 'growth', 'scale'],
+      category: 'Planning'
     },
     {
       id: 'northstar',
-      title: 'North Star Framework',
+      name: 'North Star Framework',
       description: 'Define your North Star metric and key drivers',
       color: 'emerald',
       icon: 'Star',
-      phases: ['growth', 'scale']
+      phases: ['growth', 'scale'],
+      category: 'Metrics'
     },
     {
       id: 'moscow',
-      title: 'MoSCoW Method',
+      name: 'MoSCoW Method',
       description: 'Prioritize features as Must, Should, Could, Won\'t have',
       color: 'violet',
       icon: 'CheckCircle',
-      phases: ['planning', 'development']
+      phases: ['planning', 'development'],
+      category: 'Prioritization'
     },
     {
       id: 'persona',
-      title: 'User Persona Generator',
+      name: 'User Persona Generator',
       description: 'Create detailed user personas with demographics, goals, and behaviors',
       color: 'pink',
       icon: 'Users',
-      phases: ['discovery', 'strategy']
+      phases: ['discovery', 'strategy'],
+      category: 'User Research'
     },
     {
       id: 'cohort',
-      title: 'Cohort Analysis Calculator',
+      name: 'Cohort Analysis Calculator',
       description: 'Analyze user retention patterns and churn over time',
       color: 'rose',
       icon: 'BarChart3',
-      phases: ['growth', 'scale']
+      phases: ['growth', 'scale'],
+      category: 'Analytics'
     },
     {
       id: 'abtest',
-      title: 'A/B Test Sample Size Calculator',
+      name: 'A/B Test Sample Size Calculator',
       description: 'Calculate required sample size for statistical significance',
       color: 'lime',
       icon: 'Calculator',
-      phases: ['development', 'growth']
+      phases: ['development', 'growth'],
+      category: 'Testing'
     },
     {
       id: 'clv',
-      title: 'Customer Lifetime Value Calculator',
+      name: 'Customer Lifetime Value Calculator',
       description: 'Calculate CLV, payback period, and customer acquisition ROI',
       color: 'amber',
       icon: 'DollarSign',
-      phases: ['growth', 'scale']
+      phases: ['growth', 'scale'],
+      category: 'Finance'
     },
     {
       id: 'competitive',
-      title: 'Competitive Analysis Matrix',
+      name: 'Competitive Analysis Matrix',
       description: 'Analyze competitors and identify differentiation opportunities',
       color: 'slate',
       icon: 'Compass',
-      phases: ['strategy', 'planning']
+      phases: ['strategy', 'planning'],
+      category: 'Strategy'
     },
     {
       id: 'pricing',
-      title: 'Pricing Strategy Calculator',
+      name: 'Pricing Strategy Calculator',
       description: 'Determine optimal pricing based on costs, margins, and market factors',
       color: 'fuchsia',
       icon: 'DollarSign',
-      phases: ['strategy', 'planning']
+      phases: ['strategy', 'planning'],
+      category: 'Strategy'
     },
     {
       id: 'marketsize',
-      title: 'Market Size Calculator',
+      name: 'Market Size Calculator',
       description: 'Calculate TAM, SAM, and SOM for market opportunity assessment',
       color: 'sky',
       icon: 'BarChart3',
-      phases: ['strategy', 'planning']
+      phases: ['strategy', 'planning'],
+      category: 'Strategy'
     },
     {
       id: 'customerdev',
-      title: 'Customer Development',
+      name: 'Customer Development',
       description: 'Systematic process for discovering and validating customer needs',
       color: 'blue',
       icon: 'Users',
-      phases: ['discovery', 'strategy']
+      phases: ['discovery', 'strategy'],
+      category: 'User Research'
     },
     {
       id: 'designthinking',
-      title: 'Design Thinking',
+      name: 'Design Thinking',
       description: 'Human-centered approach to innovation and problem-solving',
       color: 'green',
       icon: 'Heart',
-      phases: ['discovery', 'strategy']
+      phases: ['discovery', 'strategy'],
+      category: 'Innovation'
     },
     {
       id: 'valueprop',
-      title: 'Value Proposition Canvas',
+      name: 'Value Proposition Canvas',
       description: 'Map customer jobs, pains, and gains to your value propositions',
       color: 'teal',
       icon: 'Target',
-      phases: ['discovery', 'strategy']
+      phases: ['discovery', 'strategy'],
+      category: 'Strategy'
     },
     {
       id: 'gtm',
-      title: 'Go-to-Market Strategy',
+      name: 'Go-to-Market Strategy',
       description: 'Comprehensive plan for bringing products to market',
       color: 'purple',
       icon: 'Rocket',
-      phases: ['launch', 'growth']
+      phases: ['launch', 'growth'],
+      category: 'Strategy'
     },
     {
       id: 'growthhacking',
-      title: 'Growth Hacking',
+      name: 'Growth Hacking',
       description: 'Data-driven marketing focused on rapid experimentation',
       color: 'orange',
       icon: 'TrendingUp',
-      phases: ['growth', 'scale']
+      phases: ['growth', 'scale'],
+      category: 'Growth'
     }
   ];
 

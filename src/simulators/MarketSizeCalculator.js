@@ -16,8 +16,7 @@ const MarketSizeCalculator = () => {
       addressableSegment, 
       targetMarket, 
       marketShare, 
-      marketGrowth, 
-      marketName 
+      marketGrowth
     } = inputs;
     
     if (!totalMarket || !addressableSegment || !targetMarket) return null;
@@ -96,7 +95,7 @@ const MarketSizeCalculator = () => {
   const getMarketInsights = (results) => {
     if (!results) return null;
 
-    const { attractivenessScore, tamInBillions, samInBillions, somInBillions } = results;
+    const { attractivenessScore } = results;
     
     if (attractivenessScore >= 80) {
       return {
