@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, Briefcase, ArrowRight, Shield, Play, User } from 'lucide-react';
+import { Lock, Eye, EyeOff, Briefcase, ArrowRight, Shield, Play, User } from 'lucide-react';
 import { getUserFromDatabase } from '../config/users';
 
 const Auth = ({ onLogin }) => {

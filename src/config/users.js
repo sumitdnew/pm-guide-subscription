@@ -2,11 +2,21 @@ import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client for frontend (only if environment variables are available)
 let supabase = null;
-if (process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
-  supabase = createClient(
-    process.env.REACT_APP_SUPABASE_URL,
-    process.env.REACT_APP_SUPABASE_ANON_KEY
-  );
+
+// Check if we're in a browser environment and if environment variables are available
+if (typeof window !== 'undefined' && process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
+  try {
+    supabase = createClient(
+      process.env.REACT_APP_SUPABASE_URL,
+      process.env.REACT_APP_SUPABASE_ANON_KEY
+    );
+    console.log('Supabase client initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize Supabase client:', error);
+    supabase = null;
+  }
+} else {
+  console.log('Supabase not available - using local authentication only');
 }
 
 // Authorized users for the PM Guide system
@@ -32,31 +42,40 @@ export const isUserAuthorized = async (email) => {
   
   const normalizedEmail = email.toLowerCase();
   
-  // Check static authorized users
+  // Check static authorized users first
   if (authorizedUsers.includes(normalizedEmail)) {
+    console.log('User found in authorized users:', normalizedEmail);
     return true;
   }
   
-  // PRODUCTION: Check Supabase database for user
+  // Check test users
+  const testUsers = [
+    'sumitdas.cse@gmail.com',
+    'test@example.com',
+    'demo@pmguide.com',
+    'admin@pmguide.com',
+    'your-email@example.com'
+  ];
+  
+  if (testUsers.includes(normalizedEmail)) {
+    console.log('User found in test users:', normalizedEmail);
+    return true;
+  }
+  
+  // PRODUCTION: Check Supabase database for user (only if available)
   if (supabase) {
     try {
+      console.log('Checking Supabase for user:', normalizedEmail);
       const user = await getUserFromSupabase(normalizedEmail);
-      return user && user.subscription_status === 'active';
+      const isAuthorized = user && user.subscription_status === 'active';
+      console.log('Supabase user found:', user ? 'Yes' : 'No', 'Authorized:', isAuthorized);
+      return isAuthorized;
     } catch (error) {
       console.error('Error checking user authorization:', error);
       return false;
     }
-  }
-  
-  // For now, we'll use a simple approach
-  // In production, you'd want to check against a proper database
-  // For testing, we can add specific emails here
-  const testUsers = [
-    // 'sumitdas.cse@gmail.com', // Removed for testing
-  ];
-  
-  if (testUsers.includes(normalizedEmail)) {
-    return true;
+  } else {
+    console.log('Supabase not available, user not found in local lists:', normalizedEmail);
   }
   
   return false;
@@ -68,19 +87,22 @@ export const getUserFromDatabase = async (emailOrUsername) => {
   
   const normalizedInput = emailOrUsername.toLowerCase();
   
-  // PRODUCTION: Get user from Supabase
+  // PRODUCTION: Get user from Supabase (only if available)
   if (supabase) {
     try {
-      return await getUserFromSupabase(normalizedInput);
+      const user = await getUserFromSupabase(normalizedInput);
+      if (user) {
+        console.log('User found in Supabase:', normalizedInput);
+        return user;
+      }
     } catch (error) {
-      console.error('Error getting user from database:', error);
-      return null;
+      console.error('Error getting user from Supabase:', error);
     }
   }
   
-  // For now, return a basic user object
-  // In production, you'd query a real database
+  // Fallback: Check if user is authorized locally
   if (await isUserAuthorized(normalizedInput)) {
+    console.log('Creating local user object for:', normalizedInput);
     return {
       email: normalizedInput,
       username: normalizedInput.split('@')[0] + '_user',
@@ -90,6 +112,7 @@ export const getUserFromDatabase = async (emailOrUsername) => {
     };
   }
   
+  console.log('User not found:', normalizedInput);
   return null;
 };
 
