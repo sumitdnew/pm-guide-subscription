@@ -44,6 +44,11 @@ const UpgradePage = ({ onClose, isDemo = true }) => {
     { name: 'Growth Hacking', category: 'Growth', status: 'Upgrade Required' }
   ];
 
+  const handlePurchase = () => {
+    // Direct link to Stripe checkout
+    window.open('https://buy.stripe.com/7sYeVfdembDr4cV4ZNdjO01', '_blank');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 fixed inset-0 z-50 overflow-y-auto">
       {/* Header */}
@@ -233,18 +238,16 @@ const UpgradePage = ({ onClose, isDemo = true }) => {
             
             <div className="mb-6">
               {/* Primary Purchase Button */}
-              <button 
-                onClick={() => {
-                  // Direct link to Stripe checkout
-                  window.open('https://buy.stripe.com/7sYeVfdembDr4cV4ZNdjO01', '_blank');
-                }}
-                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-200 flex items-center justify-center space-x-2 mx-auto mb-4"
+              <button
+                onClick={handlePurchase}
+                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
-                <span>Purchase Full Version</span>
-                <Zap className="h-5 w-5" />
+                <Crown className="h-5 w-5 mr-2" />
+                Upgrade to Full Version - $29.99
               </button>
-              
-
+              <p className="text-sm text-gray-600 mt-3">
+                Secure payment powered by Stripe
+              </p>
             </div>
             
             <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
