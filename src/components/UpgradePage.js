@@ -8,7 +8,7 @@ const UpgradePage = ({ onClose, isDemo = true }) => {
       icon: <Zap className="h-6 w-6 text-blue-600" />,
       title: 'All 20+ Simulators',
       description: 'Access to every framework and methodology including RICE, ICE, JTBD, Forces Analysis, and more',
-      features: ['RICE Calculator', 'ICE Scoring', 'JTBD Generator', 'Forces Analysis', 'Kano Analysis', 'PMF Measurement']
+      features: ['RICE Calculator', 'ICE Scoring', 'AI Model Performance', 'AI Ethics Assessment', 'AI Data Quality', 'AI Readiness Assessment', 'AI ROI Calculator', 'AI User Experience']
     },
     {
       icon: <BookOpen className="h-6 w-6 text-purple-600" />,
@@ -41,7 +41,13 @@ const UpgradePage = ({ onClose, isDemo = true }) => {
     { name: 'Design Thinking', category: 'Discovery', status: 'Upgrade Required' },
     { name: 'Value Proposition Canvas', category: 'Strategy', status: 'Upgrade Required' },
     { name: 'Go-to-Market Strategy', category: 'Launch', status: 'Upgrade Required' },
-    { name: 'Growth Hacking', category: 'Growth', status: 'Upgrade Required' }
+    { name: 'Growth Hacking', category: 'Growth', status: 'Upgrade Required' },
+    { name: 'AI Model Performance', category: 'AI/ML', status: 'Available' },
+    { name: 'AI Ethics Assessment', category: 'AI/ML', status: 'Available' },
+    { name: 'AI Data Quality', category: 'AI/ML', status: 'Available' },
+    { name: 'AI Readiness Assessment', category: 'AI/ML', status: 'Available' },
+    { name: 'AI ROI Calculator', category: 'AI/ML', status: 'Available' },
+    { name: 'AI User Experience', category: 'AI/ML', status: 'Available' }
   ];
 
   const handlePurchase = () => {
@@ -174,7 +180,7 @@ const UpgradePage = ({ onClose, isDemo = true }) => {
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center space-x-2 text-sm text-gray-800">
                   <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>2 Simulators Available</span>
+                  <span>8 Simulators Available</span>
                 </li>
                 <li className="flex items-center space-x-2 text-sm text-gray-800">
                   <CheckCircle className="h-4 w-4 text-green-500" />

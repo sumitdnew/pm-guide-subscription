@@ -20,6 +20,7 @@ A comprehensive web application providing product managers with access to 20+ fr
 - **Planning**: OKR Generator
 - **Launch**: Go-to-Market Strategy
 - **Growth**: Growth Hacking
+- **AI/ML**: AI Model Performance, AI Ethics Assessment, AI Data Quality, AI Readiness Assessment, AI ROI Calculator, AI User Experience
 
 ## 🛠️ Tech Stack
 
@@ -156,7 +157,7 @@ Set these in your Vercel dashboard:
 ## 🎯 Usage
 
 ### Demo Mode
-- Access limited simulators (RICE Calculator, ICE Scoring)
+- Access limited simulators (RICE Calculator, ICE Scoring, AI Model Performance, AI Ethics Assessment, AI Data Quality, AI Readiness Assessment, AI ROI Calculator, AI User Experience)
 - View all available frameworks
 - Test the upgrade flow
 
