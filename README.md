@@ -157,7 +157,7 @@ Set these in your Vercel dashboard:
 ## 🎯 Usage
 
 ### Demo Mode
-- Access limited simulators (RICE Calculator, ICE Scoring, AI Model Performance, AI Ethics Assessment, AI Data Quality, AI Readiness Assessment, AI ROI Calculator, AI User Experience)
+- Access limited simulators (RICE Calculator, ICE Scoring)
 - View all available frameworks
 - Test the upgrade flow
 
