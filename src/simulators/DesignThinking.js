@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Heart, Lightbulb, Palette, Play, Eye, Users, Target, CheckCircle, Building2 } from 'lucide-react';
+import { Heart, Lightbulb, Palette, Play, Eye, Users, Target, CheckCircle, Building2, Grid } from 'lucide-react';
 
-const DesignThinking = ({ onViewCaseStudies }) => {
+const DesignThinking = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [empathy, setEmpathy] = useState('');
   const [define, setDefine] = useState('');
   const [ideate, setIdeate] = useState('');
@@ -43,15 +43,26 @@ const DesignThinking = ({ onViewCaseStudies }) => {
             Learn more about Design Thinking
             <Eye className="ml-1 h-4 w-4" />
           </a>
-          {onViewCaseStudies && (
-            <button
-              onClick={() => onViewCaseStudies('designthinking')}
-              className="flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors"
-            >
-              <Building2 className="h-4 w-4 mr-1" />
-              View Case Studies
-            </button>
-          )}
+          <div className="flex items-center space-x-2">
+            {onViewCaseStudies && (
+              <button
+                onClick={() => onViewCaseStudies('designthinking')}
+                className="flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors"
+              >
+                <Building2 className="h-4 w-4 mr-1" />
+                View Case Studies
+              </button>
+            )}
+            {onViewAllSimulators && (
+              <button
+                onClick={onViewAllSimulators}
+                className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-800 transition-colors"
+              >
+                <Grid className="h-4 w-4" />
+                <span>View All Simulators</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

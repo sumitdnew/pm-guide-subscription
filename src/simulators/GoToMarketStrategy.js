@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Target, Users, MessageSquare, DollarSign, Calendar, TrendingUp, FileText, ExternalLink, Rocket, Building2 } from 'lucide-react';
+import { Target, Users, MessageSquare, DollarSign, Calendar, TrendingUp, FileText, ExternalLink, Rocket, Building2, Grid } from 'lucide-react';
 
-const GoToMarketStrategy = ({ onViewCaseStudies }) => {
+const GoToMarketStrategy = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [targetMarket, setTargetMarket] = useState('');
   const [valueProposition, setValueProposition] = useState('');
   const [channels, setChannels] = useState('');
@@ -47,15 +47,26 @@ const GoToMarketStrategy = ({ onViewCaseStudies }) => {
             Learn more about Go-to-Market Strategy
             <ExternalLink className="ml-1 h-4 w-4" />
           </a>
-          {onViewCaseStudies && (
-            <button
-              onClick={() => onViewCaseStudies('gtm')}
-              className="flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors"
-            >
-              <Building2 className="h-4 w-4 mr-1" />
-              View Case Studies
-            </button>
-          )}
+          <div className="flex items-center space-x-2">
+            {onViewCaseStudies && (
+              <button
+                onClick={() => onViewCaseStudies('gtm')}
+                className="flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors"
+              >
+                <Building2 className="h-4 w-4 mr-1" />
+                View Case Studies
+              </button>
+            )}
+            {onViewAllSimulators && (
+              <button
+                onClick={onViewAllSimulators}
+                className="flex items-center space-x-2 px-4 py-2 text-purple-600 hover:text-purple-800 transition-colors"
+              >
+                <Grid className="h-4 w-4" />
+                <span>View All Simulators</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

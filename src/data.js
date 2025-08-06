@@ -592,7 +592,62 @@ export const questions = [
       icon: 'TrendingUp',
       phases: ['growth', 'scale'],
       category: 'Growth'
-    }
+    },
+    {
+      id: 'aimodel',
+      name: 'AI Model Performance',
+      description: 'Track model metrics, detect drift, and monitor health scores',
+      color: 'purple',
+      icon: 'Robot',
+      phases: ['development', 'growth', 'scale'],
+      category: 'AI/ML'
+    },
+    {
+      id: 'aiethics',
+      name: 'AI Ethics Assessment',
+      description: 'Evaluate AI model fairness, transparency, and ethical compliance',
+      color: 'green',
+      icon: 'Shield',
+      phases: ['development', 'growth', 'scale'],
+      category: 'AI/ML'
+    },
+    {
+      id: 'aidataquality',
+      name: 'AI Data Quality',
+      description: 'Manage training data quality, bias detection, and data lineage',
+      color: 'blue',
+      icon: 'Database',
+      phases: ['development', 'growth', 'scale'],
+      category: 'AI/ML'
+    },
+    {
+      id: 'aireadiness',
+      name: 'AI Readiness Assessment',
+      description: 'Comprehensive evaluation of organizational AI implementation readiness',
+      color: 'orange',
+      icon: 'Gauge',
+      phases: ['discovery', 'strategy', 'planning'],
+      category: 'AI/ML'
+    },
+    {
+      id: 'airoi',
+      name: 'AI ROI Calculator',
+      description: 'Calculate return on investment for AI projects with comprehensive cost analysis and benefit modeling',
+      color: 'teal',
+      icon: 'DollarSign',
+      phases: ['strategy', 'planning', 'development', 'growth'],
+      category: 'AI/ML'
+    },
+    {
+      id: 'aiux',
+      name: 'AI User Experience',
+      description: 'Design exceptional AI-powered user experiences with trust, transparency, and accessibility',
+      color: 'pink',
+      icon: 'Users',
+      phases: ['discovery', 'design', 'development', 'testing'],
+      category: 'AI/ML'
+    },
+
   ];
 
   export const caseStudies = {
@@ -632,7 +687,7 @@ export const questions = [
         results: 'They discovered that people weren\'t just booking a place to stay - they were hiring Airbnb to "help me feel like a local" and "create memorable experiences."',
         metrics: ['Improved customer satisfaction by 35%', 'Increased repeat bookings by 28%', 'Better product-market fit'],
         lessons: ['Focus on the job, not the product', 'Interview customers about their struggles', 'Look for emotional and social jobs'],
-        link: 'https://www.intercom.com/resources/books/intercom-jobs-to-be-done'
+        link: 'https://jobs-to-be-done.com/jobs-to-be-done-a-framework-for-customer-needs-c883cbf61c90'
       }
     ],
     'northstar': [
@@ -790,5 +845,57 @@ export const questions = [
         lessons: ['Use MoSCoW for complex project management', 'Focus on Must Have features first', 'Communicate priorities clearly to stakeholders'],
         link: 'https://www.agilebusiness.org/resource/moscow-prioritisation.html'
       }
-    ]
+    ],
+    'aimodel': [
+      {
+        company: 'Netflix',
+        title: 'AI Model Performance at Netflix',
+        description: 'How Netflix monitors and optimizes their recommendation engine performance.',
+        challenge: 'Netflix needed to ensure their recommendation engine maintained high accuracy while handling millions of users and content items.',
+        approach: 'They implemented comprehensive model monitoring: tracking accuracy, latency, drift detection, and automated retraining triggers when performance degraded.',
+        results: 'Netflix achieved 80% of viewer activity driven by recommendations, with 99.9% uptime and sub-100ms response times.',
+        metrics: ['80% of viewer activity from recommendations', '99.9% uptime', 'Sub-100ms response times'],
+        lessons: ['Monitor model drift continuously', 'Automate retraining when performance degrades', 'Balance accuracy with latency'],
+        link: 'https://netflixtechblog.com/tagged/recommendations'
+      }
+    ],
+    'aiethics': [
+      {
+        company: 'Microsoft',
+        title: 'AI Ethics Assessment at Microsoft',
+        description: 'How Microsoft implemented comprehensive AI ethics evaluation for their Azure AI services.',
+        challenge: 'Microsoft needed to ensure their AI services were fair, transparent, and compliant with regulations while building trust with enterprise customers.',
+        approach: 'They implemented a comprehensive AI ethics framework: fairness assessment across demographics, transparency through explainable AI, accountability through governance, and privacy through data protection measures.',
+        results: 'Microsoft achieved 95% ethics compliance score, reduced bias incidents by 80%, and gained enterprise customer trust for AI adoption.',
+        metrics: ['95% ethics compliance score', '80% reduction in bias incidents', 'Increased enterprise AI adoption'],
+        lessons: ['Implement ethics assessment early in development', 'Use diverse datasets to reduce bias', 'Maintain transparency for user trust'],
+        link: 'https://www.microsoft.com/en-us/ai/responsible-ai'
+      }
+    ],
+         'aidataquality': [
+       {
+         company: 'Google',
+         title: 'Data Quality at Google AI',
+         description: 'How Google maintains high-quality training data for their AI models.',
+         challenge: 'Google needed to ensure their training datasets were comprehensive, accurate, and free from bias for their AI models.',
+         approach: 'They implemented comprehensive data quality assessment frameworks, automated bias detection, and robust data lineage tracking.',
+         results: 'Google achieved 92% data quality score and reduced training time by 40% through better data preparation.',
+         metrics: ['92% data quality score', '40% reduction in training time', '99.5% data lineage coverage'],
+         lessons: ['Invest in data quality early', 'Automate bias detection', 'Maintain comprehensive data lineage'],
+         link: 'https://ai.google/research/'
+       }
+     ],
+     'aireadiness': [
+       {
+         company: 'McKinsey',
+         title: 'AI Readiness Assessment at McKinsey',
+         description: 'How McKinsey developed comprehensive AI readiness frameworks for enterprise clients.',
+         challenge: 'McKinsey needed to help large enterprises assess their readiness for AI implementation across multiple dimensions.',
+         approach: 'They developed a comprehensive assessment framework covering technical infrastructure, data maturity, team capabilities, regulatory compliance, business case, and organizational readiness.',
+         results: 'McKinsey helped 500+ organizations assess AI readiness, with 60% achieving successful AI implementation within 18 months.',
+         metrics: ['500+ organizations assessed', '60% successful AI implementation', '18-month average timeline'],
+         lessons: ['Assess all dimensions holistically', 'Focus on organizational readiness', 'Build capabilities incrementally'],
+         link: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-in-2023-generative-ais-breakout-year'
+       }
+     ]
   };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { Grid } from 'lucide-react';
 
-const PricingStrategyCalculator = () => {
+const PricingStrategyCalculator = ({ onViewAllSimulators }) => {
   const [inputs, setInputs] = useState({
     costOfGoods: '',
     fixedCosts: '',
@@ -113,6 +114,19 @@ const PricingStrategyCalculator = () => {
   return (
     <div className="bg-fuchsia-50 rounded-lg p-6">
       <h2 className="text-2xl font-bold text-fuchsia-900 mb-6">Pricing Strategy Calculator</h2>
+      
+      {/* Navigation */}
+      {onViewAllSimulators && (
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={onViewAllSimulators}
+            className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-all duration-200 shadow-sm"
+          >
+            <Grid className="h-4 w-4" />
+            <span>View All Simulators</span>
+          </button>
+        </div>
+      )}
       
       <div className="bg-fuchsia-100 p-4 rounded-lg mb-6">
         <h3 className="font-semibold text-fuchsia-900 mb-2">About Pricing Strategy Framework</h3>

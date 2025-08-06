@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TrendingUp, Target, Zap, BarChart3, Users, DollarSign, FileText, ExternalLink, Rocket, Building2 } from 'lucide-react';
+import { TrendingUp, Target, Zap, BarChart3, Users, DollarSign, FileText, ExternalLink, Rocket, Building2, Grid } from 'lucide-react';
 
-const GrowthHacking = ({ onViewCaseStudies }) => {
+const GrowthHacking = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [acquisition, setAcquisition] = useState('');
   const [activation, setActivation] = useState('');
   const [retention, setRetention] = useState('');
@@ -47,15 +47,26 @@ const GrowthHacking = ({ onViewCaseStudies }) => {
             Learn more about Growth Hacking
             <ExternalLink className="ml-1 h-4 w-4" />
           </a>
-          {onViewCaseStudies && (
-            <button
-              onClick={() => onViewCaseStudies('growthhacking')}
-              className="flex items-center px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-200 transition-colors"
-            >
-              <Building2 className="h-4 w-4 mr-1" />
-              View Case Studies
-            </button>
-          )}
+          <div className="flex items-center space-x-2">
+            {onViewCaseStudies && (
+              <button
+                onClick={() => onViewCaseStudies('growthhacking')}
+                className="flex items-center px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-200 transition-colors"
+              >
+                <Building2 className="h-4 w-4 mr-1" />
+                View Case Studies
+              </button>
+            )}
+            {onViewAllSimulators && (
+              <button
+                onClick={onViewAllSimulators}
+                className="flex items-center space-x-2 px-4 py-2 text-orange-600 hover:text-orange-800 transition-colors"
+              >
+                <Grid className="h-4 w-4" />
+                <span>View All Simulators</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

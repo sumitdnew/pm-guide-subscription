@@ -32,8 +32,8 @@ const Auth = ({ onLogin }) => {
         return;
       }
       
-      // Check if password matches
-      if (user.password !== password) {
+      // Check if password matches (for local users, accept any password)
+      if (user.password && user.password !== password) {
         setError('Invalid password. Please check your credentials.');
         return;
       }

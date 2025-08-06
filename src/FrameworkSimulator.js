@@ -4,6 +4,7 @@ import { simulatorConfigs } from './data';
 import CaseStudyViewer from './components/CaseStudyViewer';
 import { isSimulatorAvailableInDemo, getDemoLimitationMessage } from './config/demo';
 import UpgradePage from './components/UpgradePage';
+import SimulatorWrapper from './components/SimulatorWrapper';
 import RiceCalculator from './simulators/RiceCalculator';
 import IceCalculator from './simulators/IceCalculator';
 import JtbdGenerator from './simulators/JtbdGenerator';
@@ -27,10 +28,18 @@ import DesignThinking from './simulators/DesignThinking';
 import ValuePropositionCanvas from './simulators/ValuePropositionCanvas';
 import GoToMarketStrategy from './simulators/GoToMarketStrategy';
 import GrowthHacking from './simulators/GrowthHacking';
+import AIModelPerformance from './simulators/AIModelPerformance';
+import AIEthicsAssessment from './simulators/AIEthicsAssessment';
+import AIDataQuality from './simulators/AIDataQuality';
+import AIReadinessAssessment from './simulators/AIReadinessAssessment';
+import AIROICalculator from './simulators/AIROICalculator';
+import AIUserExperience from './simulators/AIUserExperience';
+
 
 const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
   const [simulatorType, setSimulatorType] = useState(framework);
   const [selectedPhase, setSelectedPhase] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCaseStudies, setShowCaseStudies] = useState(false);
   const [currentCaseStudyFramework, setCurrentCaseStudyFramework] = useState('');
   const [showUpgradePage, setShowUpgradePage] = useState(false);
@@ -48,9 +57,29 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
     { value: 'scale', label: 'Scale & Expansion', icon: Users }
   ];
 
-  const filteredConfigs = selectedPhase === 'all' 
-    ? simulatorConfigs 
-    : simulatorConfigs.filter(config => config.phases.includes(selectedPhase));
+  // Get unique categories from simulator configs
+  const categories = [
+    { value: 'all', label: 'All Categories', icon: Sparkles },
+    { value: 'AI/ML', label: 'AI/ML', icon: Crown },
+    { value: 'Strategy', label: 'Strategy', icon: Target },
+    { value: 'User Research', label: 'User Research', icon: Users },
+    { value: 'Prioritization', label: 'Prioritization', icon: CheckCircle },
+    { value: 'Growth', label: 'Growth', icon: TrendingUp },
+    { value: 'Analytics', label: 'Analytics', icon: BarChart3 },
+    { value: 'Testing', label: 'Testing', icon: Calculator },
+    { value: 'Finance', label: 'Finance', icon: DollarSign },
+    { value: 'Planning', label: 'Planning', icon: GitBranch },
+    { value: 'Metrics', label: 'Metrics', icon: BarChart3 },
+    { value: 'Feature Analysis', label: 'Feature Analysis', icon: Star },
+    { value: 'Validation', label: 'Validation', icon: CheckCircle },
+    { value: 'Innovation', label: 'Innovation', icon: Heart }
+  ];
+
+  const filteredConfigs = simulatorConfigs.filter(config => {
+    const phaseMatch = selectedPhase === 'all' || config.phases.includes(selectedPhase);
+    const categoryMatch = selectedCategory === 'all' || config.category === selectedCategory;
+    return phaseMatch && categoryMatch;
+  });
 
   // For demo mode, show all configs but mark some as locked
   const availableConfigs = filteredConfigs;
@@ -66,56 +95,91 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
   };
 
   const renderSimulator = () => {
-    switch (simulatorType) {
-      case 'rice':
-        return <RiceCalculator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'ice':
-        return <IceCalculator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'jtbd':
-        return <JtbdGenerator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'forces':
-        return <ForcesAnalyzer onViewCaseStudies={handleViewCaseStudies} />;
-      case 'kano':
-        return <KanoAnalyzer onViewCaseStudies={handleViewCaseStudies} />;
-      case 'pmf':
-        return <PmfMeasurement onViewCaseStudies={handleViewCaseStudies} />;
-      case 'swot':
-        return <SwotAnalysis onViewCaseStudies={handleViewCaseStudies} />;
-      case 'aarrr':
-        return <AarrrMetrics onViewCaseStudies={handleViewCaseStudies} />;
-      case 'okr':
-        return <OkrGenerator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'northstar':
-        return <NorthStarFramework onViewCaseStudies={handleViewCaseStudies} />;
-      case 'moscow':
-        return <MoscowMethod onViewCaseStudies={handleViewCaseStudies} />;
-      case 'persona':
-        return <UserPersonaGenerator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'cohort':
-        return <CohortAnalysisCalculator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'abtest':
-        return <AbTestSampleSizeCalculator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'clv':
-        return <CustomerLifetimeValueCalculator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'competitive':
-        return <CompetitiveAnalysisMatrix onViewCaseStudies={handleViewCaseStudies} />;
-      case 'pricing':
-        return <PricingStrategyCalculator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'marketsize':
-        return <MarketSizeCalculator onViewCaseStudies={handleViewCaseStudies} />;
-      case 'customerdev':
-        return <CustomerDevelopment onViewCaseStudies={handleViewCaseStudies} />;
-      case 'designthinking':
-        return <DesignThinking onViewCaseStudies={handleViewCaseStudies} />;
-      case 'valueprop':
-        return <ValuePropositionCanvas onViewCaseStudies={handleViewCaseStudies} />;
-      case 'gtm':
-        return <GoToMarketStrategy onViewCaseStudies={handleViewCaseStudies} />;
-      case 'growthhacking':
-        return <GrowthHacking onViewCaseStudies={handleViewCaseStudies} />;
-      default:
-        return null;
-    }
+    const simulatorProps = {
+      onViewCaseStudies: handleViewCaseStudies
+    };
+
+    const getSimulatorComponent = () => {
+      switch (simulatorType) {
+        case 'rice':
+          return <RiceCalculator {...simulatorProps} />;
+        case 'ice':
+          return <IceCalculator {...simulatorProps} />;
+        case 'jtbd':
+          return <JtbdGenerator {...simulatorProps} />;
+        case 'forces':
+          return <ForcesAnalyzer {...simulatorProps} />;
+        case 'kano':
+          return <KanoAnalyzer {...simulatorProps} />;
+        case 'pmf':
+          return <PmfMeasurement {...simulatorProps} />;
+        case 'swot':
+          return <SwotAnalysis {...simulatorProps} />;
+        case 'aarrr':
+          return <AarrrMetrics {...simulatorProps} />;
+        case 'okr':
+          return <OkrGenerator {...simulatorProps} />;
+        case 'northstar':
+          return <NorthStarFramework {...simulatorProps} />;
+        case 'moscow':
+          return <MoscowMethod {...simulatorProps} />;
+        case 'persona':
+          return <UserPersonaGenerator {...simulatorProps} />;
+        case 'cohort':
+          return <CohortAnalysisCalculator {...simulatorProps} />;
+        case 'abtest':
+          return <AbTestSampleSizeCalculator {...simulatorProps} />;
+        case 'clv':
+          return <CustomerLifetimeValueCalculator {...simulatorProps} />;
+        case 'competitive':
+          return <CompetitiveAnalysisMatrix {...simulatorProps} />;
+        case 'pricing':
+          return <PricingStrategyCalculator {...simulatorProps} />;
+        case 'marketsize':
+          return <MarketSizeCalculator {...simulatorProps} />;
+        case 'customerdev':
+          return <CustomerDevelopment {...simulatorProps} />;
+        case 'designthinking':
+          return <DesignThinking {...simulatorProps} />;
+        case 'valueprop':
+          return <ValuePropositionCanvas {...simulatorProps} />;
+        case 'gtm':
+          return <GoToMarketStrategy {...simulatorProps} />;
+        case 'growthhacking':
+          return <GrowthHacking {...simulatorProps} />;
+        case 'aimodel':
+          return <AIModelPerformance {...simulatorProps} />;
+        case 'aiethics':
+          return <AIEthicsAssessment {...simulatorProps} />;
+        case 'aidataquality':
+          return <AIDataQuality {...simulatorProps} />;
+        case 'aireadiness':
+          return <AIReadinessAssessment {...simulatorProps} />;
+        case 'airoi':
+          return <AIROICalculator {...simulatorProps} />;
+        case 'aiux':
+          return <AIUserExperience {...simulatorProps} />;
+
+        default:
+          return null;
+      }
+    };
+
+    const simulatorComponent = getSimulatorComponent();
+    if (!simulatorComponent) return null;
+
+    // Get simulator config for metadata
+    const config = simulatorConfigs.find(c => c.id === simulatorType);
+    
+    return (
+      <SimulatorWrapper
+        onViewAllSimulators={() => setSimulatorType('all')}
+        onViewCaseStudies={handleViewCaseStudies}
+        frameworkId={simulatorType}
+      >
+        {simulatorComponent}
+      </SimulatorWrapper>
+    );
   };
 
   const getIconComponent = (iconName) => {
@@ -231,6 +295,35 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
                 >
                   <IconComponent className="h-4 w-4" />
                   <span className="text-sm font-medium">{phase.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Category Filter */}
+      <div className="mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <Sparkles className="h-5 w-5 text-gray-600" />
+            <h2 className="text-lg font-semibold text-gray-900">Filter by Category</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <button
+                  key={category.value}
+                  onClick={() => setSelectedCategory(category.value)}
+                  className={`flex items-center space-x-2 px-4 py-3 rounded-lg border transition-all duration-200 ${
+                    selectedCategory === category.value
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-green-500 shadow-md'
+                      : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
+                  }`}
+                >
+                  <IconComponent className="h-4 w-4" />
+                  <span className="text-sm font-medium">{category.label}</span>
                 </button>
               );
             })}

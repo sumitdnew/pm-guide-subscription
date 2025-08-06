@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Building2 } from 'lucide-react';
+import { Building2, Grid } from 'lucide-react';
 
-const PmfMeasurement = ({ onViewCaseStudies }) => {
+const PmfMeasurement = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [inputs, setInputs] = useState({
     veryDisappointed: '',
     somewhatDisappointed: '',
@@ -73,15 +73,26 @@ const PmfMeasurement = ({ onViewCaseStudies }) => {
           >
             Learn more about PMF →
           </a>
-          {onViewCaseStudies && (
-            <button
-              onClick={() => onViewCaseStudies('pmf')}
-              className="flex items-center px-3 py-1 bg-teal-100 text-teal-700 rounded-lg text-sm font-medium hover:bg-teal-200 transition-colors"
-            >
-              <Building2 className="h-4 w-4 mr-1" />
-              View Case Studies
-            </button>
-          )}
+          <div className="flex items-center space-x-2">
+            {onViewCaseStudies && (
+              <button
+                onClick={() => onViewCaseStudies('pmf')}
+                className="flex items-center px-3 py-1 bg-teal-100 text-teal-700 rounded-lg text-sm font-medium hover:bg-teal-200 transition-colors"
+              >
+                <Building2 className="h-4 w-4 mr-1" />
+                View Case Studies
+              </button>
+            )}
+            {onViewAllSimulators && (
+              <button
+                onClick={onViewAllSimulators}
+                className="flex items-center space-x-2 px-4 py-2 text-teal-600 hover:text-teal-800 transition-colors"
+              >
+                <Grid className="h-4 w-4" />
+                <span>View All Simulators</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
       

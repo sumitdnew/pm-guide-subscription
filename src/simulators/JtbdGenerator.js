@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Building2 } from 'lucide-react';
+import { Building2, Grid } from 'lucide-react';
 
-const JtbdGenerator = ({ onViewCaseStudies }) => {
+const JtbdGenerator = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [inputs, setInputs] = useState({
     customerType: '',
     situation: '',
@@ -29,22 +29,33 @@ const JtbdGenerator = ({ onViewCaseStudies }) => {
         </p>
         <div className="flex items-center justify-between">
           <a 
-            href="https://jobs-to-be-done.com/jobs-to-be-done-a-framework-for-customer-needs-c883cbf61c90" 
+            href="https://www.intercom.com/resources/books/intercom-jobs-to-be-done" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-green-600 hover:text-green-800 text-sm font-medium underline"
           >
             Learn more about JTBD →
           </a>
-          {onViewCaseStudies && (
-            <button
-              onClick={() => onViewCaseStudies('jtbd')}
-              className="flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors"
-            >
-              <Building2 className="h-4 w-4 mr-1" />
-              View Case Studies
-            </button>
-          )}
+          <div className="flex items-center space-x-2">
+            {onViewCaseStudies && (
+              <button
+                onClick={() => onViewCaseStudies('jtbd')}
+                className="flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors"
+              >
+                <Building2 className="h-4 w-4 mr-1" />
+                View Case Studies
+              </button>
+            )}
+            {onViewAllSimulators && (
+              <button
+                onClick={onViewAllSimulators}
+                className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-800 transition-colors"
+              >
+                <Grid className="h-4 w-4" />
+                <span>View All Simulators</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
       

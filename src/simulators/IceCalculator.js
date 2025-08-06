@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Building2, TrendingUp, Target, Zap } from 'lucide-react';
 import { simulatorStyles, colorSchemes } from '../styles/simulatorStyles';
 
-const IceCalculator = ({ onViewCaseStudies }) => {
+const IceCalculator = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [inputs, setInputs] = useState({
     impact: '',
     confidence: '',
@@ -56,6 +56,8 @@ const IceCalculator = ({ onViewCaseStudies }) => {
             </div>
           </div>
         </div>
+
+
 
         {/* Main Card */}
         <div className={simulatorStyles.card}>

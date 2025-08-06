@@ -183,23 +183,20 @@ const RecommendationsView = ({ recommendations, onReset, onOpenSimulator, onView
               </div>
               <h2 className="text-xl font-semibold text-gray-900">Current Phase</h2>
             </div>
-            <p className="text-gray-700 capitalize">
+            <p className="text-gray-700 capitalize mb-4">
               You're currently in the <span className="font-semibold text-orange-600">{recommendations.phase}</span> phase of your product journey.
             </p>
+            {/* Start Over Button - Moved to top of current phase */}
+            <button
+              onClick={onReset}
+              className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors bg-white rounded-lg border border-orange-200 hover:border-orange-300 hover:bg-orange-50"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Start Over</span>
+            </button>
           </div>
         </div>
       )}
-
-      {/* Back Button */}
-      <div className="mb-6">
-        <button
-          onClick={onReset}
-          className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Start Over</span>
-        </button>
-      </div>
 
       {/* Priority Actions Section */}
       {recommendations.actions && recommendations.actions.length > 0 && (

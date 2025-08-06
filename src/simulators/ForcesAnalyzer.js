@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Building2 } from 'lucide-react';
+import { Building2, Grid } from 'lucide-react';
 
-const ForcesAnalyzer = ({ onViewCaseStudies }) => {
+const ForcesAnalyzer = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [inputs, setInputs] = useState({
     push: '',
     pull: '',
@@ -46,15 +46,26 @@ const ForcesAnalyzer = ({ onViewCaseStudies }) => {
           >
             Learn more about 4 Forces →
           </a>
-          {onViewCaseStudies && (
-            <button
-              onClick={() => onViewCaseStudies('forces')}
-              className="flex items-center px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
-            >
-              <Building2 className="h-4 w-4 mr-1" />
-              View Case Studies
-            </button>
-          )}
+          <div className="flex items-center space-x-2">
+            {onViewCaseStudies && (
+              <button
+                onClick={() => onViewCaseStudies('forces')}
+                className="flex items-center px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+              >
+                <Building2 className="h-4 w-4 mr-1" />
+                View Case Studies
+              </button>
+            )}
+            {onViewAllSimulators && (
+              <button
+                onClick={onViewAllSimulators}
+                className="flex items-center space-x-2 px-4 py-2 text-red-600 hover:text-red-800 transition-colors"
+              >
+                <Grid className="h-4 w-4" />
+                <span>View All Simulators</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
       

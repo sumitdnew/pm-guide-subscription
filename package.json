@@ -9,6 +9,7 @@
     "dotenv": "^17.2.1",
     "express": "^4.21.2",
     "firebase": "^12.0.0",
+    "jspdf": "^3.0.1",
     "lucide-react": "^0.263.1",
     "nodemailer": "^7.0.5",
     "react": "^18.0.0",

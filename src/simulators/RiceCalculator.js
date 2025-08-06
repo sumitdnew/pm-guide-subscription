@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Building2, Calculator, TrendingUp, Users, Clock } from 'lucide-react';
 import { simulatorStyles, colorSchemes } from '../styles/simulatorStyles';
 
-const RiceCalculator = ({ onViewCaseStudies }) => {
+const RiceCalculator = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [inputs, setInputs] = useState({
     reach: '',
     impact: '',
@@ -31,6 +31,8 @@ const RiceCalculator = ({ onViewCaseStudies }) => {
             </div>
           </div>
         </div>
+
+
 
         {/* Main Card */}
         <div className={simulatorStyles.card}>

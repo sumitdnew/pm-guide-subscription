@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Users, Target, CheckCircle, AlertCircle, FileText, MessageSquare, TrendingUp, Lightbulb, Building2 } from 'lucide-react';
+import { Users, Target, CheckCircle, AlertCircle, FileText, MessageSquare, TrendingUp, Lightbulb, Building2, Grid } from 'lucide-react';
 
-const CustomerDevelopment = ({ onViewCaseStudies }) => {
+const CustomerDevelopment = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [customerInterviews, setCustomerInterviews] = useState('');
   const [hypothesis, setHypothesis] = useState('');
   const [validationMethod, setValidationMethod] = useState('');
@@ -43,15 +43,26 @@ const CustomerDevelopment = ({ onViewCaseStudies }) => {
             Learn more about Customer Development
             <MessageSquare className="ml-1 h-4 w-4" />
           </a>
-          {onViewCaseStudies && (
-            <button
-              onClick={() => onViewCaseStudies('customerdev')}
-              className="flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors"
-            >
-              <Building2 className="h-4 w-4 mr-1" />
-              View Case Studies
-            </button>
-          )}
+          <div className="flex items-center space-x-2">
+            {onViewCaseStudies && (
+              <button
+                onClick={() => onViewCaseStudies('customerdev')}
+                className="flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors"
+              >
+                <Building2 className="h-4 w-4 mr-1" />
+                View Case Studies
+              </button>
+            )}
+            {onViewAllSimulators && (
+              <button
+                onClick={onViewAllSimulators}
+                className="flex items-center space-x-2 px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                <Grid className="h-4 w-4" />
+                <span>View All Simulators</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

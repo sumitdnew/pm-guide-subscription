@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Building2 } from 'lucide-react';
+import { Building2, Grid } from 'lucide-react';
 
-const SwotAnalysis = ({ onViewCaseStudies }) => {
+const SwotAnalysis = ({ onViewCaseStudies, onViewAllSimulators }) => {
   const [inputs, setInputs] = useState({
     strengths: '',
     weaknesses: '',
@@ -31,6 +31,19 @@ const SwotAnalysis = ({ onViewCaseStudies }) => {
   return (
     <div className="bg-indigo-50 rounded-lg p-6">
       <h2 className="text-2xl font-bold text-indigo-900 mb-6">SWOT Analysis</h2>
+      
+      {/* Navigation */}
+      {onViewAllSimulators && (
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={onViewAllSimulators}
+            className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-all duration-200 shadow-sm"
+          >
+            <Grid className="h-4 w-4" />
+            <span>View All Simulators</span>
+          </button>
+        </div>
+      )}
       
       <div className="bg-indigo-100 p-4 rounded-lg mb-6">
         <h3 className="font-semibold text-indigo-900 mb-2">About SWOT Analysis Framework</h3>
