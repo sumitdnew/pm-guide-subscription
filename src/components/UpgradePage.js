@@ -1,5 +1,6 @@
 import React from 'react';
 import { Crown, BookOpen, Zap, Shield, ArrowLeft, CheckCircle } from 'lucide-react';
+import analytics from '../utils/analytics';
 
 const UpgradePage = ({ onClose, isDemo = true }) => {
   console.log('UpgradePage rendered - onClose:', onClose, 'isDemo:', isDemo);
@@ -51,6 +52,7 @@ const UpgradePage = ({ onClose, isDemo = true }) => {
   ];
 
   const handlePurchase = () => {
+    analytics.trackUpgradeAttempt('purchase_button');
     // Live Stripe checkout link
     window.open('https://buy.stripe.com/eVq14pgqygXLeRz0JxdjO03', '_blank');
   };

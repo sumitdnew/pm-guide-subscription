@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calculator, FileText, GitBranch, Star, BarChart3, Compass, Rocket, Target, CheckCircle, Filter, Users, TrendingUp, ArrowLeft, Sparkles, BookOpen, DollarSign, Heart, Crown, Lock } from 'lucide-react';
 import { simulatorConfigs } from './data';
 import CaseStudyViewer from './components/CaseStudyViewer';
 import { isSimulatorAvailableInDemo, getDemoLimitationMessage } from './config/demo';
 import UpgradePage from './components/UpgradePage';
 import SimulatorWrapper from './components/SimulatorWrapper';
+import analytics from './utils/analytics';
 import RiceCalculator from './simulators/RiceCalculator';
 import IceCalculator from './simulators/IceCalculator';
 import JtbdGenerator from './simulators/JtbdGenerator';
@@ -85,6 +86,7 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
   const availableConfigs = filteredConfigs;
 
   const handleViewCaseStudies = (frameworkId) => {
+    analytics.trackFrameworkUsage(frameworkId, 'view_case_studies');
     setCurrentCaseStudyFramework(frameworkId);
     setShowCaseStudies(true);
   };
@@ -339,7 +341,16 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
             <div
               key={config.id}
               className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer"
-              onClick={() => setSimulatorType(config.id)}
+              onClick={() => {
+                analytics.trackFrameworkUsage(config.id, 'click');
+                if (isDemo && !isSimulatorAvailableInDemo(config.id)) {
+                  analytics.trackUpgradeAttempt('simulator_click');
+                  setShowUpgradePage(true);
+                } else {
+                  analytics.trackSimulatorUsage(config.id, 'view');
+                  setSimulatorType(config.id);
+                }
+              }}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
@@ -386,6 +397,7 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
+                        analytics.trackUpgradeAttempt('upgrade_button');
                         console.log('Upgrade button clicked, setting showUpgradePage to true');
                         setShowUpgradePage(true);
                       }}

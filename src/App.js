@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Auth from './components/Auth';
 import PMAssistant from './PMAssistant';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 import auth from './utils/auth';
-import { LogOut, User, Briefcase, Crown } from 'lucide-react';
+import analytics from './utils/analytics';
+import { LogOut, User, Briefcase, Crown, BarChart3 } from 'lucide-react';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isDemo, setIsDemo] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -40,6 +43,13 @@ function App() {
     setCurrentUser(null);
     setIsDemo(false);
   };
+
+  // Track page view when component mounts
+  useEffect(() => {
+    if (isAuthenticated) {
+      analytics.trackPageView(window.location.pathname);
+    }
+  }, [isAuthenticated]);
 
   // Show auth screen if not authenticated
   if (!isAuthenticated) {
@@ -83,6 +93,14 @@ function App() {
               </div>
               
               <button
+                onClick={() => setShowAnalytics(true)}
+                className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <BarChart3 className="h-4 w-4" />
+                <span>Analytics</span>
+              </button>
+              
+              <button
                 onClick={handleLogout}
                 className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
               >
@@ -96,7 +114,11 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <PMAssistant isDemo={isDemo} />
+        {showAnalytics ? (
+          <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />
+        ) : (
+          <PMAssistant isDemo={isDemo} />
+        )}
       </main>
     </div>
   );
