@@ -1,4 +1,21 @@
 // Analytics utility for tracking user interactions and framework usage
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client for analytics
+let supabase = null;
+if (typeof window !== 'undefined' && process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
+  try {
+    supabase = createClient(
+      process.env.REACT_APP_SUPABASE_URL,
+      process.env.REACT_APP_SUPABASE_ANON_KEY
+    );
+    console.log('Supabase analytics client initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize Supabase analytics client:', error);
+    supabase = null;
+  }
+}
+
 class Analytics {
   constructor() {
     this.events = [];
@@ -59,7 +76,7 @@ class Analytics {
     });
   }
 
-  trackEvent(eventName, data = {}) {
+  async trackEvent(eventName, data = {}) {
     const event = {
       eventName,
       data,
@@ -68,12 +85,39 @@ class Analytics {
 
     this.events.push(event);
     
-    // Store in localStorage for persistence
+    // Store in localStorage for persistence (fallback)
     this.saveToLocalStorage();
+    
+    // Store in Supabase if available
+    if (supabase) {
+      await this.saveToSupabase(event);
+    }
     
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
       console.log('Analytics Event:', event);
+    }
+  }
+
+  async saveToSupabase(event) {
+    try {
+      const { error } = await supabase
+        .from('analytics_events')
+        .insert([{
+          event_name: event.eventName,
+          event_data: event.data,
+          session_id: event.data.sessionId,
+          timestamp: event.timestamp,
+          created_at: new Date().toISOString()
+        }]);
+
+      if (error) {
+        console.error('Failed to save analytics to Supabase:', error);
+      } else {
+        console.log('Analytics event saved to Supabase');
+      }
+    } catch (error) {
+      console.error('Error saving to Supabase:', error);
     }
   }
 
@@ -96,18 +140,44 @@ class Analytics {
     }
   }
 
-  getAnalyticsData() {
+  async getAnalyticsData() {
+    // Try to get from Supabase first
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('analytics_events')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(1000);
+
+        if (error) {
+          console.error('Failed to get analytics from Supabase:', error);
+        } else {
+          // Transform Supabase data to match localStorage format
+          const events = data.map(row => ({
+            eventName: row.event_name,
+            data: row.event_data,
+            timestamp: row.timestamp
+          }));
+          return { events };
+        }
+      } catch (error) {
+        console.error('Error getting analytics from Supabase:', error);
+      }
+    }
+
+    // Fallback to localStorage
     try {
       const data = localStorage.getItem('pm_guide_analytics');
       return data ? JSON.parse(data) : { events: [] };
     } catch (error) {
-      console.error('Failed to get analytics data:', error);
+      console.error('Failed to get analytics data from localStorage:', error);
       return { events: [] };
     }
   }
 
-  getFrameworkUsageStats() {
-    const data = this.getAnalyticsData();
+  async getFrameworkUsageStats() {
+    const data = await this.getAnalyticsData();
     const frameworkEvents = data.events.filter(event => event.eventName === 'framework_usage');
     
     const stats = {};
@@ -128,8 +198,8 @@ class Analytics {
     return stats;
   }
 
-  getSimulatorUsageStats() {
-    const data = this.getAnalyticsData();
+  async getSimulatorUsageStats() {
+    const data = await this.getAnalyticsData();
     const simulatorEvents = data.events.filter(event => event.eventName === 'simulator_usage');
     
     const stats = {};
@@ -150,8 +220,8 @@ class Analytics {
     return stats;
   }
 
-  getSessionStats() {
-    const data = this.getAnalyticsData();
+  async getSessionStats() {
+    const data = await this.getAnalyticsData();
     const sessions = new Set();
     const pageViews = data.events.filter(event => event.eventName === 'page_view').length;
     const frameworkUsage = data.events.filter(event => event.eventName === 'framework_usage').length;
@@ -174,14 +244,34 @@ class Analytics {
     };
   }
 
-  clearAnalytics() {
+  async clearAnalytics() {
     try {
+      // Clear from Supabase if available
+      if (supabase) {
+        const { error } = await supabase
+          .from('analytics_events')
+          .delete()
+          .neq('id', 0); // Delete all records
+
+        if (error) {
+          console.error('Failed to clear analytics from Supabase:', error);
+        } else {
+          console.log('Analytics data cleared from Supabase');
+        }
+      }
+
+      // Clear from localStorage
       localStorage.removeItem('pm_guide_analytics');
       this.events = [];
-      console.log('Analytics data cleared');
+      console.log('Analytics data cleared from localStorage');
     } catch (error) {
       console.error('Failed to clear analytics:', error);
     }
+  }
+
+  // Method to check if Supabase is available
+  isSupabaseAvailable() {
+    return !!supabase;
   }
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, Users, Eye, TrendingUp, Activity, Download, Trash2, RefreshCw } from 'lucide-react';
+import { BarChart3, Users, Eye, TrendingUp, Activity, Download, Trash2, RefreshCw, Database, AlertCircle } from 'lucide-react';
 import analytics from '../utils/analytics';
 import { simulatorConfigs } from '../data';
 
@@ -8,38 +8,60 @@ const AnalyticsDashboard = ({ onClose }) => {
   const [frameworkStats, setFrameworkStats] = useState({});
   const [simulatorStats, setSimulatorStats] = useState({});
   const [activeTab, setActiveTab] = useState('overview');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadAnalyticsData();
   }, []);
 
-  const loadAnalyticsData = () => {
-    const sessionStats = analytics.getSessionStats();
-    const frameworkUsage = analytics.getFrameworkUsageStats();
-    const simulatorUsage = analytics.getSimulatorUsageStats();
+  const loadAnalyticsData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const sessionStats = await analytics.getSessionStats();
+      const frameworkUsage = await analytics.getFrameworkUsageStats();
+      const simulatorUsage = await analytics.getSimulatorUsageStats();
 
-    setStats(sessionStats);
-    setFrameworkStats(frameworkUsage);
-    setSimulatorStats(simulatorUsage);
+      setStats(sessionStats);
+      setFrameworkStats(frameworkUsage);
+      setSimulatorStats(simulatorUsage);
+    } catch (err) {
+      setError('Failed to load analytics data');
+      console.error('Error loading analytics:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const exportAnalyticsData = () => {
-    const data = analytics.getAnalyticsData();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `pm-guide-analytics-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const exportAnalyticsData = async () => {
+    try {
+      const data = await analytics.getAnalyticsData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pm-guide-analytics-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error exporting analytics:', err);
+      alert('Failed to export analytics data');
+    }
   };
 
-  const clearAnalyticsData = () => {
+  const clearAnalyticsData = async () => {
     if (window.confirm('Are you sure you want to clear all analytics data? This action cannot be undone.')) {
-      analytics.clearAnalyticsData();
-      loadAnalyticsData();
+      try {
+        await analytics.clearAnalytics();
+        await loadAnalyticsData();
+      } catch (err) {
+        console.error('Error clearing analytics:', err);
+        alert('Failed to clear analytics data');
+      }
     }
   };
 
@@ -70,12 +92,29 @@ const AnalyticsDashboard = ({ onClose }) => {
       }));
   };
 
-  if (!stats) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <RefreshCw className="h-8 w-8 text-gray-400 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="h-8 w-8 text-red-400 mx-auto mb-4" />
+          <p className="text-red-600">{error}</p>
+          <button
+            onClick={loadAnalyticsData}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -94,6 +133,12 @@ const AnalyticsDashboard = ({ onClose }) => {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
                 <p className="text-gray-600">Track user engagement and framework usage</p>
+                <div className="flex items-center space-x-2 mt-1">
+                  <Database className={`h-4 w-4 ${analytics.isSupabaseAvailable() ? 'text-green-500' : 'text-gray-400'}`} />
+                  <span className={`text-sm ${analytics.isSupabaseAvailable() ? 'text-green-600' : 'text-gray-500'}`}>
+                    {analytics.isSupabaseAvailable() ? 'Connected to Supabase' : 'Local Storage Only'}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="flex items-center space-x-3">
