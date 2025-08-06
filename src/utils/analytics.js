@@ -19,7 +19,7 @@ class Analytics {
     this.trackEvent('session_start', {
       sessionId: this.sessionId,
       userAgent: navigator.userAgent,
-      screenResolution: `${screen.width}x${screen.height}`,
+      screenResolution: `${window.screen.width}x${window.screen.height}`,
       timestamp: new Date().toISOString()
     });
   }
