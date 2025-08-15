@@ -101,27 +101,26 @@ A comprehensive web application providing product managers with access to 20+ fr
 ### Environment Variables for Production
 
 Set these in your Vercel dashboard:
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `EMAIL_USER`
-- `EMAIL_PASS`
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `REACT_APP_SUPABASE_URL`
-- `REACT_APP_SUPABASE_ANON_KEY`
-- `APP_URL`
-- `MAILCHIMP_API_KEY` (optional)
-- `MAILCHIMP_LIST_ID` (optional)
-- `MAILCHIMP_SERVER_PREFIX` (optional)
+- `EMAIL_USER` - Gmail address for sending welcome emails
+- `EMAIL_PASS` - Gmail app password for authentication
+- `SUPABASE_URL` - Supabase project URL
+- `SUPABASE_ANON_KEY` - Supabase anonymous key
+- `REACT_APP_SUPABASE_URL` - Frontend Supabase URL
+- `REACT_APP_SUPABASE_ANON_KEY` - Frontend Supabase key
+- `APP_URL` - Your production domain URL
+- `MAILCHIMP_API_KEY` - Mailchimp API key (optional)
+- `MAILCHIMP_LIST_ID` - Mailchimp audience/list ID (optional)
+- `MAILCHIMP_SERVER_PREFIX` - Mailchimp server prefix (optional)
 
 ## 🔧 Configuration
 
-### Stripe Setup
+### Mailchimp Setup (Optional)
 
-1. **Create a Stripe account** and get your API keys
-2. **Create a webhook endpoint** pointing to your domain: `https://yourdomain.com/api/webhook`
-3. **Configure webhook events** to listen for `checkout.session.completed`
-4. **Copy the webhook signing secret** to your environment variables
+1. **Create a Mailchimp account** and get your API key
+2. **Create an audience/list** for your subscribers
+3. **Get your server prefix** from your Mailchimp account
+4. **Add the credentials** to your environment variables
+5. **See `MAILCHIMP_SETUP.md`** for detailed setup instructions
 
 ### Supabase Setup (Required - for Subscribers & Analytics)
 
@@ -142,13 +141,12 @@ Set these in your Vercel dashboard:
 2. **Generate an app password** for this application
 3. **Add the email and password** to environment variables
 
-### Mailing List Integration (Optional)
+### Mailing List Integration
 
-The app includes integration points for popular mailing list services:
+The app includes integration with popular mailing list services:
 - **Mailchimp**: Fully integrated - see `MAILCHIMP_SETUP.md` for setup instructions
-- **ConvertKit**: Add your API key and endpoint
-- **ActiveCampaign**: Configure webhook integration
-- **SendGrid**: Set up contact list integration
+- **Local Storage**: Subscribers stored locally in `subscribers.json` for development
+- **Supabase**: Subscribers stored in database for production
 
 ## 🎯 Usage
 
@@ -186,13 +184,19 @@ The app includes integration points for popular mailing list services:
 pm-guide-subscription/
 ├── src/
 │   ├── components/          # React components
-│   ├── pages/              # Page components
+│   │   ├── EmailSubscription.js    # Email capture component
+│   │   ├── AdminPanel.js           # Hidden admin panel
+│   │   ├── SubscriberDashboard.js  # Subscriber management
+│   │   └── AnalyticsDashboard.js   # Analytics display
 │   ├── utils/              # Utility functions
 │   └── App.js              # Main app component
 ├── api/                    # Vercel API routes
-│   └── webhook.js          # Stripe webhook handler
+│   ├── subscribe.js        # Email subscription handler
+│   └── webhook.js          # Legacy webhook handler
 ├── server.js               # Express server (local development)
 ├── package.json            # Dependencies and scripts
+├── MAILCHIMP_SETUP.md      # Mailchimp integration guide
+├── ADMIN_ACCESS.md         # Admin panel documentation
 └── README.md              # This file
 ```
 
@@ -201,7 +205,8 @@ pm-guide-subscription/
 - `npm start` - Start React development server
 - `npm run build` - Build for production
 - `npm test` - Run tests
-- `node server.js` - Start backend server
+- `node server.js` - Start backend server (local development)
+- `npm run start-prod` - Build and start production server
 
 ## 🤝 Contributing
 
