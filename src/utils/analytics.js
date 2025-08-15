@@ -68,13 +68,7 @@ class Analytics {
     });
   }
 
-  trackUpgradeAttempt(source = 'unknown') {
-    this.trackEvent('upgrade_attempt', {
-      source,
-      sessionId: this.sessionId,
-      timestamp: new Date().toISOString()
-    });
-  }
+  // Upgrade tracking removed - all features are now free
 
   async trackEvent(eventName, data = {}) {
     const event = {
@@ -226,7 +220,6 @@ class Analytics {
     const pageViews = data.events.filter(event => event.eventName === 'page_view').length;
     const frameworkUsage = data.events.filter(event => event.eventName === 'framework_usage').length;
     const simulatorUsage = data.events.filter(event => event.eventName === 'simulator_usage').length;
-    const upgradeAttempts = data.events.filter(event => event.eventName === 'upgrade_attempt').length;
     
     data.events.forEach(event => {
       if (event.data.sessionId) {
@@ -239,7 +232,6 @@ class Analytics {
       totalPageViews: pageViews,
       totalFrameworkUsage: frameworkUsage,
       totalSimulatorUsage: simulatorUsage,
-      totalUpgradeAttempts: upgradeAttempts,
       averagePageViewsPerSession: sessions.size > 0 ? (pageViews / sessions.size).toFixed(2) : 0
     };
   }

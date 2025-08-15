@@ -8,8 +8,8 @@ A comprehensive web application providing product managers with access to 20+ fr
 - **20+ Framework Simulators**: RICE, ICE, JTBD, Forces Analysis, Kano Analysis, and more
 - **Complete Case Studies**: Real-world examples from Netflix, Spotify, Airbnb, Uber, and Slack
 - **Interactive Tools**: Calculators, generators, and analysis frameworks
-- **Secure Payment System**: Stripe integration for seamless purchases
-- **User Management**: Automatic credential generation and email delivery
+- **Email Subscription**: Simple email capture for mailing list
+- **Free Access**: All features available at no cost
 
 ### Available Frameworks
 - **Prioritization**: RICE Calculator, ICE Scoring, MoSCoW Method
@@ -35,9 +35,8 @@ A comprehensive web application providing product managers with access to 20+ fr
 - **Express.js** - Web framework
 - **Vercel** - Serverless deployment platform
 
-### Database & Authentication
+### Database
 - **Supabase** - PostgreSQL database with real-time features
-- **Stripe** - Payment processing and webhooks
 
 ### Email Service
 - **Nodemailer** - Email delivery system
@@ -63,22 +62,14 @@ A comprehensive web application providing product managers with access to 20+ fr
    npm install
    ```
 
-3. **Set up environment variables**
-   Create a `.env` file in the root directory:
+3. **Set up environment variables (optional)**
+   Create a `.env` file in the root directory for analytics:
    ```env
-   # Stripe Configuration
-   STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-   STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
-
-   # Email Configuration (Gmail)
-   EMAIL_USER=your_email@gmail.com
-   EMAIL_PASS=your_gmail_app_password
-
-   # Supabase Database Configuration
+   # Supabase Database Configuration (for analytics)
    SUPABASE_URL=https://your-project.supabase.co
    SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
-   # Frontend Supabase Configuration
+   # Frontend Supabase Configuration (for analytics)
    REACT_APP_SUPABASE_URL=https://your-project.supabase.co
    REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
@@ -119,6 +110,9 @@ Set these in your Vercel dashboard:
 - `REACT_APP_SUPABASE_URL`
 - `REACT_APP_SUPABASE_ANON_KEY`
 - `APP_URL`
+- `MAILCHIMP_API_KEY` (optional)
+- `MAILCHIMP_LIST_ID` (optional)
+- `MAILCHIMP_SERVER_PREFIX` (optional)
 
 ## 🔧 Configuration
 
@@ -129,55 +123,59 @@ Set these in your Vercel dashboard:
 3. **Configure webhook events** to listen for `checkout.session.completed`
 4. **Copy the webhook signing secret** to your environment variables
 
-### Supabase Setup
+### Supabase Setup (Required - for Subscribers & Analytics)
 
 1. **Create a Supabase project**
-2. **Create a `users` table** with the following schema:
+2. **Set up subscribers table** using the provided schema:
    ```sql
-   CREATE TABLE users (
-     id SERIAL PRIMARY KEY,
-     email VARCHAR UNIQUE NOT NULL,
-     username VARCHAR UNIQUE NOT NULL,
-     password VARCHAR NOT NULL,
-     access_level VARCHAR DEFAULT 'full',
-     created_at TIMESTAMP DEFAULT NOW(),
-     is_demo BOOLEAN DEFAULT FALSE,
-     subscription_status VARCHAR DEFAULT 'active',
-     stripe_customer_id VARCHAR
-   );
+   -- Run the contents of supabase-subscribers-schema.sql
    ```
-3. **Copy your Supabase URL and anon key** to environment variables
+3. **Set up analytics tables** using the provided schema:
+   ```sql
+   -- Run the contents of supabase-analytics-schema.sql
+   ```
+4. **Copy your Supabase URL and anon key** to environment variables
 
-### Email Setup
+### Email Setup (Required - for Welcome Emails)
 
 1. **Enable 2-factor authentication** on your Gmail account
 2. **Generate an app password** for this application
 3. **Add the email and password** to environment variables
 
+### Mailing List Integration (Optional)
+
+The app includes integration points for popular mailing list services:
+- **Mailchimp**: Fully integrated - see `MAILCHIMP_SETUP.md` for setup instructions
+- **ConvertKit**: Add your API key and endpoint
+- **ActiveCampaign**: Configure webhook integration
+- **SendGrid**: Set up contact list integration
+
 ## 🎯 Usage
 
-### Demo Mode
-- Access limited simulators (RICE Calculator, ICE Scoring)
-- View all available frameworks
-- Test the upgrade flow
+### Email Subscription Required
+- Users must subscribe with their email to access the platform
+- Email is stored for mailing list purposes
+- Welcome email sent upon subscription
+- Access granted immediately after subscription
 
-### Full Version
-- Access all 20+ simulators
-- Complete case studies
-- Comprehensive framework library
-- Lifetime access after purchase
+### User Flow
+1. User visits the application
+2. Sees subscription page with feature highlights
+3. Enters email address to subscribe
+4. Receives welcome email
+5. Gains immediate access to all features
+6. Can use all frameworks and simulators
+7. Receives weekly updates via email
 
-### Payment Flow
-1. User clicks "Upgrade to Full Version"
-2. Redirected to Stripe checkout
-3. Payment processed securely
-4. Webhook triggers user creation
-5. Email sent with login credentials
-6. User gains full access
+### Admin Access
+- Hidden admin panel available for administrators
+- Access via keyboard shortcut: `Ctrl + Shift + A`
+- Or click the hidden "Admin" link at the bottom of the page
+- Provides analytics dashboard and subscriber management
+- See `ADMIN_ACCESS.md` for detailed instructions
 
 ## 🔒 Security
 
-- **Webhook signature verification** ensures requests come from Stripe
 - **Environment variables** keep secrets secure
 - **HTTPS only** for all production traffic
 - **Private repository** protects source code
@@ -227,7 +225,6 @@ For support or questions:
 ## 🎉 Acknowledgments
 
 - Built with React and modern web technologies
-- Powered by Stripe for secure payments
 - Hosted on Vercel for reliable deployment
 - Database powered by Supabase
 

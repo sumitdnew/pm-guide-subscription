@@ -1,11 +1,43 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
+const mailchimp = require('@mailchimp/mailchimp_marketing');
 const fs = require('fs');
 const path = require('path');
 
 const app = express();
+
+// Enable CORS
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000', 'http://127.0.0.1:3001'],
+  credentials: true
+}));
+
+// Initialize Mailchimp client
+if (process.env.MAILCHIMP_API_KEY && process.env.MAILCHIMP_SERVER_PREFIX) {
+  try {
+    mailchimp.setConfig({
+      apiKey: process.env.MAILCHIMP_API_KEY,
+      server: process.env.MAILCHIMP_SERVER_PREFIX,
+    });
+    console.log('Mailchimp client initialized');
+  } catch (error) {
+    console.error('Failed to initialize Mailchimp client:', error);
+  }
+} else {
+  // Manual fallback for Mailchimp configuration
+  try {
+    mailchimp.setConfig({
+      apiKey: '98ac16ab3579b59c1dd7a3f178781cf3-us12',
+      server: 'us12',
+    });
+    console.log('Mailchimp client initialized (manual fallback)');
+  } catch (error) {
+    console.error('Failed to initialize Mailchimp client:', error);
+  }
+}
 
 // Webhook endpoint - must be before express.json() middleware
 app.post('/webhook', async (req, res) => {
@@ -80,6 +112,191 @@ app.post('/webhook', async (req, res) => {
 // Add express.json() middleware after webhook endpoint
 app.use(express.json());
 
+// Subscribe endpoint
+app.post('/api/subscribe', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  // Basic email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Invalid email format' });
+  }
+
+  try {
+    // Store subscriber in local file for now
+    const subscribersFile = path.join(__dirname, 'subscribers.json');
+    let subscribers = [];
+    
+    if (fs.existsSync(subscribersFile)) {
+      subscribers = JSON.parse(fs.readFileSync(subscribersFile, 'utf8'));
+    }
+    
+    // Check if email already exists
+    const existingSubscriber = subscribers.find(s => s.email.toLowerCase() === email.toLowerCase());
+    if (existingSubscriber) {
+      return res.status(200).json({ 
+        success: true, 
+        message: 'Already subscribed to PM Guide' 
+      });
+    }
+    
+    // Add new subscriber
+    const newSubscriber = {
+      email: email.toLowerCase(),
+      subscribed_at: new Date().toISOString(),
+      status: 'active'
+    };
+    
+    subscribers.push(newSubscriber);
+    fs.writeFileSync(subscribersFile, JSON.stringify(subscribers, null, 2));
+    
+    // Add to Mailchimp if configured
+    if (process.env.MAILCHIMP_API_KEY && process.env.MAILCHIMP_LIST_ID) {
+      try {
+        await addToMailchimp(email);
+        console.log('Subscriber added to Mailchimp:', email);
+      } catch (error) {
+        console.error('Error adding to Mailchimp:', error);
+        // Don't fail the subscription if Mailchimp fails
+      }
+    } else {
+      // Manual fallback for Mailchimp
+      try {
+        await addToMailchimp(email);
+        console.log('Subscriber added to Mailchimp (manual fallback):', email);
+      } catch (error) {
+        console.error('Error adding to Mailchimp (manual fallback):', error);
+        // Don't fail the subscription if Mailchimp fails
+      }
+    }
+
+    // Send welcome email if email service is configured
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      try {
+        await sendWelcomeEmail(email);
+        console.log('Welcome email sent to:', email);
+      } catch (error) {
+        console.error('Error sending welcome email:', error);
+        // Don't fail the subscription if email fails
+      }
+    }
+
+    console.log('Subscription successful:', email);
+    res.status(200).json({ 
+      success: true, 
+      message: 'Successfully subscribed to PM Guide' 
+    });
+
+  } catch (error) {
+    console.error('Subscription error:', error);
+    res.status(500).json({ 
+      error: 'Failed to subscribe. Please try again.' 
+    });
+  }
+});
+
+// Send welcome email function
+async function sendWelcomeEmail(email) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Welcome to PM Guide! 🎉',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 10px 10px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to PM Guide!</h1>
+          <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Product Management Framework Library</p>
+        </div>
+        
+        <div style="background: white; padding: 40px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          <h2 style="color: #333; margin-top: 0;">Thank you for subscribing! 🚀</h2>
+          
+          <p style="color: #666; line-height: 1.6;">
+            You now have access to our comprehensive collection of product management frameworks, 
+            simulators, and real-world case studies.
+          </p>
+          
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #333; margin-top: 0;">What you can access:</h3>
+            <ul style="color: #666; line-height: 1.8;">
+              <li>✅ 20+ Interactive Framework Simulators</li>
+              <li>✅ Real-world Case Studies (Netflix, Spotify, Airbnb)</li>
+              <li>✅ Growth & Analytics Tools</li>
+              <li>✅ Weekly PM Insights & Updates</li>
+            </ul>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.APP_URL || 'http://localhost:3000'}" 
+               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              Start Exploring Now
+            </a>
+          </div>
+          
+          <p style="color: #666; font-size: 14px; margin-top: 30px;">
+            You'll receive weekly updates about new frameworks, case studies, and product management insights.
+          </p>
+          
+          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+          
+          <p style="color: #999; font-size: 12px; text-align: center;">
+            If you have any questions, feel free to reply to this email.<br>
+            PM Guide Team
+          </p>
+        </div>
+      </div>
+    `
+  };
+
+  return transporter.sendMail(mailOptions);
+}
+
+// Mailchimp integration function
+async function addToMailchimp(email) {
+  const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '98ac16ab3579b59c1dd7a3f178781cf3-us12';
+  const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || '16a8d8f166';
+  const MAILCHIMP_SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX || 'us12';
+  
+  if (!MAILCHIMP_API_KEY || !MAILCHIMP_LIST_ID || !MAILCHIMP_SERVER_PREFIX) {
+    console.log('Mailchimp not configured, skipping');
+    return;
+  }
+  
+  try {
+    const response = await mailchimp.lists.addListMember(MAILCHIMP_LIST_ID, {
+      email_address: email,
+      status: 'subscribed',
+      merge_fields: {
+        FNAME: email.split('@')[0],
+        LNAME: '',
+        SOURCE: 'PM Guide Website'
+      },
+      tags: ['PM Guide Subscriber', 'Product Management']
+    });
+    
+    console.log('Successfully added to Mailchimp:', response.email_address);
+    return response;
+  } catch (error) {
+    if (error.status === 400 && error.response?.body?.title === 'Member Exists') {
+      console.log('Subscriber already exists in Mailchimp:', email);
+      return { status: 'already_exists' };
+    }
+    throw error;
+  }
+}
+
 // Generate user credentials
 async function createUserCredentials(email) {
   const username = email.split('@')[0] + '_' + Date.now();
@@ -132,7 +349,7 @@ function generateSecurePassword() {
 
 // Send credentials email
 async function sendCredentialsEmail(email, credentials) {
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     service: 'gmail', // or your email service
     auth: {
       user: process.env.EMAIL_USER,
@@ -180,6 +397,30 @@ async function sendCredentialsEmail(email, credentials) {
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// Serve static files from the React app build directory (if it exists)
+const buildPath = path.join(__dirname, 'build');
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath));
+
+  // For any other request, send back React's index.html file
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(buildPath, 'index.html'));
+  });
+} else {
+  // If build directory doesn't exist, serve a simple message
+  app.get('*', (req, res) => {
+    res.json({ 
+      message: 'PM Guide API Server Running', 
+      note: 'Please run "npm run build" to build the React app',
+      endpoints: {
+        subscribe: 'POST /api/subscribe',
+        health: 'GET /health',
+        webhook: 'POST /webhook'
+      }
+    });
+  });
+}
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

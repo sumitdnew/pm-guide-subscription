@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Calculator, FileText, GitBranch, Star, BarChart3, Compass, Rocket, Target, CheckCircle, Filter, Users, TrendingUp, ArrowLeft, Sparkles, BookOpen, DollarSign, Heart, Crown, Lock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calculator, FileText, GitBranch, Star, BarChart3, Compass, Rocket, Target, CheckCircle, Filter, Users, TrendingUp, ArrowLeft, Sparkles, BookOpen, DollarSign, Heart, Crown } from 'lucide-react';
 import { simulatorConfigs } from './data';
 import CaseStudyViewer from './components/CaseStudyViewer';
-import { isSimulatorAvailableInDemo, getDemoLimitationMessage } from './config/demo';
-import UpgradePage from './components/UpgradePage';
 import SimulatorWrapper from './components/SimulatorWrapper';
 import analytics from './utils/analytics';
 import RiceCalculator from './simulators/RiceCalculator';
@@ -43,9 +41,8 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCaseStudies, setShowCaseStudies] = useState(false);
   const [currentCaseStudyFramework, setCurrentCaseStudyFramework] = useState('');
-  const [showUpgradePage, setShowUpgradePage] = useState(false);
   
-  console.log('FrameworkSimulator - isDemo:', isDemo, 'showUpgradePage:', showUpgradePage);
+  console.log('FrameworkSimulator - isDemo:', isDemo);
 
   const phases = [
     { value: 'all', label: 'All Phases', icon: Star },
@@ -170,8 +167,8 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
     const simulatorComponent = getSimulatorComponent();
     if (!simulatorComponent) return null;
 
-    // Get simulator config for metadata
-    const config = simulatorConfigs.find(c => c.id === simulatorType);
+    // Get simulator config for metadata (unused but kept for future use)
+    // const config = simulatorConfigs.find(c => c.id === simulatorType);
     
     return (
       <SimulatorWrapper
@@ -255,11 +252,11 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
           <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Crown className="h-5 w-5 text-green-600" />
-              <span className="text-sm font-medium text-green-800">Demo Version</span>
+              <span className="text-sm font-medium text-green-800">Free Version</span>
             </div>
-                    <p className="text-sm text-green-700">
-          You can see all frameworks but only 2 simulators are available in demo. {getDemoLimitationMessage().upgrade}
-        </p>
+            <p className="text-sm text-green-700">
+              All frameworks and simulators are now available for free!
+            </p>
           </div>
         )}
       </div>
@@ -343,13 +340,7 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
               className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer"
               onClick={() => {
                 analytics.trackFrameworkUsage(config.id, 'click');
-                if (isDemo && !isSimulatorAvailableInDemo(config.id)) {
-                  analytics.trackUpgradeAttempt('simulator_click');
-                  setShowUpgradePage(true);
-                } else {
-                  analytics.trackSimulatorUsage(config.id, 'view');
-                  setSimulatorType(config.id);
-                }
+                setSimulatorType(config.id);
               }}
             >
               <div className="flex items-start justify-between mb-4">
@@ -393,24 +384,9 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
                     Case Studies
                   </button>
                   
-                  {isDemo && !isSimulatorAvailableInDemo(config.id) ? (
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        analytics.trackUpgradeAttempt('upgrade_button');
-                        console.log('Upgrade button clicked, setting showUpgradePage to true');
-                        setShowUpgradePage(true);
-                      }}
-                      className="px-3 py-1.5 text-xs font-medium bg-gray-100 text-gray-500 rounded-lg flex items-center space-x-1 hover:bg-gray-200 transition-colors cursor-pointer"
-                    >
-                      <Lock className="h-3 w-3" />
-                      <span>Upgrade Required</span>
-                    </button>
-                  ) : (
-                    <button className="px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200">
-                      Try Simulator
-                    </button>
-                  )}
+                  <button className="px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200">
+                    Try Simulator
+                  </button>
                 </div>
               </div>
             </div>
@@ -426,14 +402,6 @@ const FrameworkSimulator = ({ onBack, framework = '', isDemo = false }) => {
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No frameworks found</h3>
           <p className="text-gray-600">Try selecting a different phase or check back later for new frameworks.</p>
-        </div>
-      )}
-
-      {/* Upgrade Page */}
-      {showUpgradePage && (
-        <div>
-          {console.log('Rendering UpgradePage, showUpgradePage:', showUpgradePage)}
-          <UpgradePage onClose={() => setShowUpgradePage(false)} isDemo={isDemo} />
         </div>
       )}
     </div>

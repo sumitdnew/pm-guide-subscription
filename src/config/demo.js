@@ -1,9 +1,15 @@
-// Demo configuration - limits available features for demo users
+// Demo configuration - all features now available for free
 export const demoConfig = {
-  // Only 2 simulators available in demo
-  availableSimulators: ['rice', 'ice'],
+  // All simulators available for free
+  availableSimulators: [
+    'rice', 'ice', 'jtbd', 'forces', 'kano', 'pmf', 'swot', 'aarrr', 
+    'okr', 'northstar', 'moscow', 'persona', 'cohort', 'abtest', 
+    'clv', 'competitive', 'pricing', 'marketsize', 'customerdev', 
+    'designthinking', 'valueprop', 'gtm', 'growthhacking',
+    'aimodel', 'aiethics', 'aidataquality', 'aireadiness', 'airoi', 'aieux'
+  ],
   
-  // All phases available for demo
+  // All phases available
   availablePhases: ['all', 'discovery', 'strategy', 'planning', 'development', 'launch', 'growth', 'scale'],
   
   // All product types available
@@ -12,17 +18,17 @@ export const demoConfig = {
   // All team sizes available
   availableTeamSizes: ['limited', 'moderate', 'substantial', 'enterprise'],
   
-  // Demo limitations
+  // No limitations - everything is free
   limitations: {
-    maxSimulators: 2,
-    showUpgradePrompt: true,
-    watermark: 'DEMO VERSION'
+    maxSimulators: Infinity,
+    showUpgradePrompt: false,
+    watermark: 'FREE VERSION'
   },
   
-  // Upgrade messaging
+  // No upgrade messaging needed
   upgradeMessage: {
-    title: 'Upgrade to Full Version',
-    description: 'Get access to all 20+ frameworks and simulators',
+    title: 'All Features Available',
+    description: 'Enjoy full access to all frameworks and simulators',
     features: [
       'All 20+ interactive simulators',
       'Complete case study library',
@@ -31,20 +37,19 @@ export const demoConfig = {
       'Custom framework creation',
       'Priority support'
     ],
-    cta: 'Contact us for pricing'
+    cta: 'Start exploring!'
   }
 };
 
-// Check if a simulator is available in demo
+// Check if a simulator is available - now all simulators are available
 export const isSimulatorAvailableInDemo = (simulatorId) => {
-  return demoConfig.availableSimulators.includes(simulatorId);
+  return true; // All simulators are now available for free
 };
 
-// Get demo limitations message
+// Get demo limitations message - now shows everything is free
 export const getDemoLimitationMessage = () => {
   return {
-    title: 'Demo Version',
-    message: `You can see all frameworks but only ${demoConfig.availableSimulators.length} simulators are available in demo.`,
-    upgrade: 'Upgrade to access all 20+ simulators.'
+    title: 'Free Version',
+    message: 'All frameworks and simulators are now available for free!'
   };
 }; 

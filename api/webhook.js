@@ -133,9 +133,7 @@ async function createUserCredentials(email) {
       password,
       access_level: 'full',
       created_at: new Date().toISOString(),
-      is_demo: false,
-      subscription_status: 'active',
-      stripe_customer_id: null // Could be added if needed
+      is_demo: false
     };
     
     // PRODUCTION: Save to Supabase database
@@ -151,8 +149,7 @@ async function createUserCredentials(email) {
       console.log('User created (not saved to database):', {
         email: user.email,
         username: user.username,
-        accessLevel: user.access_level,
-        subscriptionStatus: user.subscription_status
+        accessLevel: user.access_level
       });
     }
     
@@ -213,7 +210,6 @@ async function sendCredentialsEmail(email, credentials) {
     console.log('Username:', credentials.username);
     console.log('Password:', credentials.password);
     console.log('Access Level:', 'full');
-    console.log('Subscription Status:', 'active');
     console.log('=== END CREDENTIALS ===');
     console.log('To configure email, add EMAIL_USER and EMAIL_PASS environment variables in Vercel');
     return;

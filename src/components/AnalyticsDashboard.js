@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, Users, Eye, TrendingUp, Activity, Download, Trash2, RefreshCw, Database, AlertCircle } from 'lucide-react';
+import { BarChart3, Users, Eye, Activity, Download, Trash2, RefreshCw, Database, AlertCircle, CheckCircle } from 'lucide-react';
 import analytics from '../utils/analytics';
 import { simulatorConfigs } from '../data';
 
@@ -245,13 +245,13 @@ const AnalyticsDashboard = ({ onClose }) => {
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-6 text-white">
+                  <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-orange-100 text-sm">Upgrade Attempts</p>
-                        <p className="text-3xl font-bold">{stats.totalUpgradeAttempts}</p>
+                        <p className="text-green-100 text-sm">Free Access</p>
+                        <p className="text-3xl font-bold">✓</p>
                       </div>
-                      <TrendingUp className="h-8 w-8 text-orange-200" />
+                      <CheckCircle className="h-8 w-8 text-green-200" />
                     </div>
                   </div>
                 </div>

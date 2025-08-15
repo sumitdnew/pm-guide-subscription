@@ -1,66 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import Auth from './components/Auth';
 import PMAssistant from './PMAssistant';
-import AnalyticsDashboard from './components/AnalyticsDashboard';
-import auth from './utils/auth';
+import EmailSubscription from './components/EmailSubscription';
+import AdminPanel from './components/AdminPanel';
 import analytics from './utils/analytics';
-import { LogOut, User, Briefcase, Crown, BarChart3 } from 'lucide-react';
+import { User, Briefcase, Crown } from 'lucide-react';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isDemo, setIsDemo] = useState(false);
-  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscriberEmail, setSubscriberEmail] = useState('');
+  const [showAdmin, setShowAdmin] = useState(false);
 
+  // Check if user has already subscribed (stored in localStorage)
   useEffect(() => {
-    const checkAuth = () => {
-      const authenticated = auth.isAuthenticated();
-      setIsAuthenticated(authenticated);
-      
-      if (authenticated) {
-        const user = auth.getCurrentUser();
-        setCurrentUser(user);
-        // Set demo state based on stored user data
-        setIsDemo(user?.isDemo || false);
-      }
-    };
-
-    checkAuth();
+    const subscribed = localStorage.getItem('pm_guide_subscribed');
+    const email = localStorage.getItem('pm_guide_subscriber_email');
+    if (subscribed === 'true' && email) {
+      setIsSubscribed(true);
+      setSubscriberEmail(email);
+    }
   }, []);
-
-  const handleLogin = (user) => {
-    auth.login(user);
-    setIsAuthenticated(true);
-    setCurrentUser(user);
-    setIsDemo(user.isDemo || false);
-  };
-
-
-
-  const handleLogout = () => {
-    auth.logout();
-    setIsAuthenticated(false);
-    setCurrentUser(null);
-    setIsDemo(false);
-  };
 
   // Track page view when component mounts
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isSubscribed) {
       analytics.trackPageView(window.location.pathname);
     }
-  }, [isAuthenticated]);
+  }, [isSubscribed]);
 
-  // Show auth screen if not authenticated
-  if (!isAuthenticated) {
-    return (
-      <div className="App">
-        <Auth onLogin={handleLogin} />
-      </div>
-    );
+  // Admin access via keyboard shortcut (Ctrl+Shift+A)
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.ctrlKey && event.shiftKey && event.key === 'A') {
+        event.preventDefault();
+        setShowAdmin(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
+  const handleSubscribe = (email) => {
+    // Store subscription in localStorage
+    localStorage.setItem('pm_guide_subscribed', 'true');
+    localStorage.setItem('pm_guide_subscriber_email', email);
+    
+    setIsSubscribed(true);
+    setSubscriberEmail(email);
+    
+    // Track subscription event
+    analytics.trackEvent('email_subscription', {
+      email: email,
+      timestamp: new Date().toISOString()
+    });
+  };
+
+  // Show subscription page if not subscribed
+  if (!isSubscribed) {
+    return <EmailSubscription onSubscribe={handleSubscribe} />;
   }
 
-  // Show main app if authenticated
+  // Show admin panel if admin mode is active
+  if (showAdmin) {
+    return <AdminPanel onClose={() => setShowAdmin(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Professional Header */}
@@ -78,35 +82,17 @@ function App() {
               </div>
             </div>
 
-            {/* User Info and Actions */}
+            {/* Actions */}
             <div className="flex items-center space-x-4">
-              {isDemo && (
-                <div className="flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-medium rounded-full">
-                  <Crown className="h-3 w-3" />
-                  <span>DEMO</span>
-                </div>
-              )}
+              <div className="flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-medium rounded-full">
+                <Crown className="h-3 w-3" />
+                <span>FREE</span>
+              </div>
               
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <User className="h-4 w-4" />
-                <span>{currentUser?.name || currentUser?.email}</span>
+                <span>{subscriberEmail}</span>
               </div>
-              
-              <button
-                onClick={() => setShowAnalytics(true)}
-                className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                <BarChart3 className="h-4 w-4" />
-                <span>Analytics</span>
-              </button>
-              
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
-              </button>
             </div>
           </div>
         </div>
@@ -114,12 +100,19 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {showAnalytics ? (
-          <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />
-        ) : (
-          <PMAssistant isDemo={isDemo} />
-        )}
+        <PMAssistant isDemo={false} />
       </main>
+
+      {/* Hidden Admin Access */}
+      <footer className="mt-auto py-4 text-center">
+        <button
+          onClick={() => setShowAdmin(true)}
+          className="text-xs text-gray-400 hover:text-gray-600 transition-colors opacity-30 hover:opacity-100"
+          title="Admin Access (Ctrl+Shift+A)"
+        >
+          Admin
+        </button>
+      </footer>
     </div>
   );
 }

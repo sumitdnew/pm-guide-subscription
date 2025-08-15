@@ -47,7 +47,6 @@ SELECT
   COUNT(CASE WHEN event_name = 'page_view' THEN 1 END) as page_views,
   COUNT(CASE WHEN event_name = 'framework_usage' THEN 1 END) as framework_usage,
   COUNT(CASE WHEN event_name = 'simulator_usage' THEN 1 END) as simulator_usage,
-  COUNT(CASE WHEN event_name = 'upgrade_attempt' THEN 1 END) as upgrade_attempts,
   MIN(created_at) as first_event,
   MAX(created_at) as last_event
 FROM analytics_events;
@@ -85,7 +84,6 @@ SELECT
   COUNT(CASE WHEN event_name = 'page_view' THEN 1 END) as page_views,
   COUNT(CASE WHEN event_name = 'framework_usage' THEN 1 END) as framework_interactions,
   COUNT(CASE WHEN event_name = 'simulator_usage' THEN 1 END) as simulator_interactions,
-  COUNT(CASE WHEN event_name = 'upgrade_attempt' THEN 1 END) as upgrade_attempts,
   MIN(created_at) as session_start,
   MAX(created_at) as session_end,
   EXTRACT(EPOCH FROM (MAX(created_at) - MIN(created_at))) as session_duration_seconds
