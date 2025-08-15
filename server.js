@@ -26,18 +26,9 @@ if (process.env.MAILCHIMP_API_KEY && process.env.MAILCHIMP_SERVER_PREFIX) {
   } catch (error) {
     console.error('Failed to initialize Mailchimp client:', error);
   }
-} else {
-  // Manual fallback for Mailchimp configuration
-  try {
-    mailchimp.setConfig({
-      apiKey: '98ac16ab3579b59c1dd7a3f178781cf3-us12',
-      server: 'us12',
-    });
-    console.log('Mailchimp client initialized (manual fallback)');
-  } catch (error) {
-    console.error('Failed to initialize Mailchimp client:', error);
-  }
-}
+          } else {
+            console.log('Mailchimp environment variables not configured');
+          }
 
 // Webhook endpoint - must be before express.json() middleware
 app.post('/webhook', async (req, res) => {
@@ -163,16 +154,9 @@ app.post('/api/subscribe', async (req, res) => {
         console.error('Error adding to Mailchimp:', error);
         // Don't fail the subscription if Mailchimp fails
       }
-    } else {
-      // Manual fallback for Mailchimp
-      try {
-        await addToMailchimp(email);
-        console.log('Subscriber added to Mailchimp (manual fallback):', email);
-      } catch (error) {
-        console.error('Error adding to Mailchimp (manual fallback):', error);
-        // Don't fail the subscription if Mailchimp fails
-      }
-    }
+                  } else {
+                console.log('Mailchimp not configured, skipping Mailchimp integration');
+              }
 
     // Send welcome email if email service is configured
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
@@ -265,9 +249,9 @@ async function sendWelcomeEmail(email) {
 
 // Mailchimp integration function
 async function addToMailchimp(email) {
-  const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '98ac16ab3579b59c1dd7a3f178781cf3-us12';
-  const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || '16a8d8f166';
-  const MAILCHIMP_SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX || 'us12';
+  const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
+  const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID;
+  const MAILCHIMP_SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX;
   
   if (!MAILCHIMP_API_KEY || !MAILCHIMP_LIST_ID || !MAILCHIMP_SERVER_PREFIX) {
     console.log('Mailchimp not configured, skipping');
